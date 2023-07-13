@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.ai.common.prompt;
+package com.microsoft.azure.acme.askforhelp.common.prompt;
 
 import java.util.List;
 

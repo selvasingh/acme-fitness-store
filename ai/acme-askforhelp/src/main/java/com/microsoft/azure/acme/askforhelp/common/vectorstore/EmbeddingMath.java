@@ -1,6 +1,4 @@
-package com.microsoft.azure.acme.ai.common.vectorstore;
-
-import com.azure.ai.openai.models.Embeddings;
+package com.microsoft.azure.acme.askforhelp.common.vectorstore;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
-package com.microsoft.azure.acme.ai.webapi;
+package com.microsoft.azure.acme.askforhelp.webapi;
 
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
-import com.microsoft.azure.acme.ai.common.AzureOpenAIClient;
-import com.microsoft.azure.acme.ai.common.ChatPlanner;
-import com.microsoft.azure.acme.ai.common.vectorstore.SimpleMemoryVectorStore;
-import com.microsoft.azure.acme.ai.common.vectorstore.VectorStore;
+import com.microsoft.azure.acme.askforhelp.common.AzureOpenAIClient;
+import com.microsoft.azure.acme.askforhelp.common.ChatPlanner;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.SimpleMemoryVectorStore;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

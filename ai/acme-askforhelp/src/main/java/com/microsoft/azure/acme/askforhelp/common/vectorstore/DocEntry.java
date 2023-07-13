@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.ai.common.vectorstore;
+package com.microsoft.azure.acme.askforhelp.common.vectorstore;
 
 import lombok.Builder;
 import lombok.Data;

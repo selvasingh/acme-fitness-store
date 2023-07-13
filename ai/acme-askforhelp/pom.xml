@@ -8,9 +8,9 @@
         <version>3.0.6</version>
     </parent>
     <groupId>com.microsoft.azure</groupId>
-    <artifactId>acme-ai</artifactId>
+    <artifactId>acme-askforhelp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>acme-ai</name>
+    <name>acme-askforhelp</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>

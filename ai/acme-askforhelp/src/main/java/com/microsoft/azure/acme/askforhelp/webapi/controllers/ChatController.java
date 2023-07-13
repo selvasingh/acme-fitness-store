@@ -1,9 +1,9 @@
-package com.microsoft.azure.acme.ai.webapi.controllers;
+package com.microsoft.azure.acme.askforhelp.webapi.controllers;
 
 
 import com.azure.ai.openai.models.ChatCompletions;
-import com.microsoft.azure.acme.ai.common.ChatPlanner;
-import com.microsoft.azure.acme.ai.webapi.models.ChatCompletionsRequest;
+import com.microsoft.azure.acme.askforhelp.common.ChatPlanner;
+import com.microsoft.azure.acme.askforhelp.webapi.models.ChatCompletionsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

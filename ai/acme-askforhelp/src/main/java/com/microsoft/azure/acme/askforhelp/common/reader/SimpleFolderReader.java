@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.ai.common.reader;
+package com.microsoft.azure.acme.askforhelp.common.reader;
 
 import lombok.RequiredArgsConstructor;
 
@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class SimpleFolderReader {

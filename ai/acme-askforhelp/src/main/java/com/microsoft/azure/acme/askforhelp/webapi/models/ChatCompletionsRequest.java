@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.ai.webapi.models;
+package com.microsoft.azure.acme.askforhelp.webapi.models;
 
 import com.azure.ai.openai.models.ChatMessage;
 import lombok.Data;

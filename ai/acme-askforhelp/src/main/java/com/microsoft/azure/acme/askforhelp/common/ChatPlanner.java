@@ -1,11 +1,11 @@
-package com.microsoft.azure.acme.ai.common;
+package com.microsoft.azure.acme.askforhelp.common;
 
 import com.azure.ai.openai.models.ChatCompletions;
 import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.ChatRole;
-import com.microsoft.azure.acme.ai.common.prompt.PromptTemplate;
-import com.microsoft.azure.acme.ai.common.vectorstore.VectorStore;
-import com.microsoft.azure.acme.ai.common.vectorstore.DocEntry;
+import com.microsoft.azure.acme.askforhelp.common.prompt.PromptTemplate;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.DocEntry;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;

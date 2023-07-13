@@ -1,8 +1,8 @@
-package com.microsoft.azure.acme.ai.common;
+package com.microsoft.azure.acme.askforhelp.common;
 
-import com.microsoft.azure.acme.ai.common.reader.SimpleFolderReader;
-import com.microsoft.azure.acme.ai.common.vectorstore.DocEntry;
-import com.microsoft.azure.acme.ai.common.vectorstore.SimpleMemoryVectorStore;
+import com.microsoft.azure.acme.askforhelp.common.reader.SimpleFolderReader;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.DocEntry;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.SimpleMemoryVectorStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

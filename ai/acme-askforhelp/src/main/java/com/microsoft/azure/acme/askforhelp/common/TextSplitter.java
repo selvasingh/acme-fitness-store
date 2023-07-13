@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.ai.common;
+package com.microsoft.azure.acme.askforhelp.common;
 
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;

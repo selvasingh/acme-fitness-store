@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.ai.webapi;
+package com.microsoft.azure.acme.askforhelp.webapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
