@@ -20,8 +20,13 @@ function addMessage(message, senderIsAI) {
 
   const sender = senderIsAI ? 'ai' : 'customer';
   const messageElement = $(`<div class="message ${sender}"></div>`);
-  const messageSpan = $('<span></span>');
-  messageSpan.text(message);
+  const messageSpan = $('<div></div>');
+
+  if (senderIsAI) {
+    messageSpan.html(marked.parse(message));
+  } else {
+    messageSpan.text(message);
+  }
   messageElement.append(messageSpan);
   $('#aiChatHistory').append(messageElement);
   $('#aiChatHistory').scrollTop($('#aiChatHistory').prop('scrollHeight'));
