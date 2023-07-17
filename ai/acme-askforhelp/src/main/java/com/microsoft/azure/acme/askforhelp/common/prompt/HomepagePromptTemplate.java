@@ -2,7 +2,7 @@ package com.microsoft.azure.acme.askforhelp.common.prompt;
 
 import java.util.List;
 
-public class PromptTemplate {
+public class HomepagePromptTemplate {
 
     private static final String template = """
             Context information is below.

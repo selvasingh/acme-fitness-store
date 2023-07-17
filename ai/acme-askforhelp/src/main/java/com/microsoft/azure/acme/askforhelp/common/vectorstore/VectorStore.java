@@ -3,13 +3,13 @@ package com.microsoft.azure.acme.askforhelp.common.vectorstore;
 import java.util.List;
 
 public interface VectorStore {
-    void saveDocument(String key, DocEntry doc);
+    void saveRecord(RecordEntry record);
 
-    DocEntry getDocument(String key);
+    RecordEntry getRecord(String id);
 
-    void removeDocument(String key);
+    void removeRecord(String id);
 
-    List<DocEntry> searchTopKNearest(List<Double> embedding, int k);
+    List<RecordEntry> searchTopKNearest(List<Double> embedding, int k);
 
-    List<DocEntry> searchTopKNearest(List<Double> embedding, int k, double cutOff);
+    List<RecordEntry> searchTopKNearest(List<Double> embedding, int k, double cutOff);
 }

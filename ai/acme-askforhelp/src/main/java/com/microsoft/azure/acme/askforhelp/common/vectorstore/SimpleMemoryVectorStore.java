@@ -27,27 +27,27 @@ public class SimpleMemoryVectorStore implements VectorStore {
     }
 
     @Override
-    public void saveDocument(String key, DocEntry doc) {
-        data.store.put(key, doc);
+    public void saveRecord(RecordEntry record) {
+        data.store.put(record.getId(), record);
     }
 
     @Override
-    public DocEntry getDocument(String key) {
-        return data.store.getOrDefault(key, null);
+    public RecordEntry getRecord(String id) {
+        return data.store.getOrDefault(id, null);
     }
 
     @Override
-    public void removeDocument(String key) {
-        data.store.remove(key);
+    public void removeRecord(String id) {
+        data.store.remove(id);
     }
 
     @Override
-    public List<DocEntry> searchTopKNearest(List<Double> embedding, int k) {
+    public List<RecordEntry> searchTopKNearest(List<Double> embedding, int k) {
         return searchTopKNearest(embedding, k, 0);
     }
 
     @Override
-    public List<DocEntry> searchTopKNearest(List<Double> embedding, int k, double cutOff) {
+    public List<RecordEntry> searchTopKNearest(List<Double> embedding, int k, double cutOff) {
         var similarities = data.store.values().stream().map(entry -> new Similarity(
                         entry.getId(),
                         EmbeddingMath.cosineSimilarity(embedding, entry.getEmbedding())))
@@ -87,6 +87,6 @@ public class SimpleMemoryVectorStore implements VectorStore {
     @Setter
     @Getter
     private static class VectorStoreData {
-        private Map<String, DocEntry> store = new ConcurrentHashMap<>();
+        private Map<String, RecordEntry> store = new ConcurrentHashMap<>();
     }
 }

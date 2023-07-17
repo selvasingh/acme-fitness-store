@@ -3,7 +3,7 @@ package com.microsoft.azure.acme.askforhelp.webapi;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
 import com.microsoft.azure.acme.askforhelp.common.AzureOpenAIClient;
-import com.microsoft.azure.acme.askforhelp.common.ChatPlanner;
+import com.microsoft.azure.acme.askforhelp.common.ChatTask;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.SimpleMemoryVectorStore;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,8 +30,8 @@ public class Config {
     private String vectorJsonFile;
 
     @Bean
-    public ChatPlanner planner(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
-        return new ChatPlanner(openAIClient, vectorStore);
+    public ChatTask planner(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
+        return new ChatTask(openAIClient, vectorStore);
     }
 
     @Bean

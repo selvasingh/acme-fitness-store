@@ -1,7 +1,7 @@
 package com.microsoft.azure.acme.askforhelp.common;
 
 import com.microsoft.azure.acme.askforhelp.common.reader.SimpleFolderReader;
-import com.microsoft.azure.acme.askforhelp.common.vectorstore.DocEntry;
+import com.microsoft.azure.acme.askforhelp.common.vectorstore.RecordEntry;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.SimpleMemoryVectorStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +35,9 @@ public class DocumentIndexPlanner {
                 var response = client.getEmbeddings(List.of(chunk));
                 var embedding = response.getData().get(0).getEmbedding();
                 String key = UUID.randomUUID().toString();
-                vectorStore.saveDocument(key, DocEntry.builder()
+                vectorStore.saveRecord(RecordEntry.builder()
                                 .id(key)
-                                .hash("")
+                                .docId(fileName)
                                 .embedding(embedding)
                                 .text(chunk)
                                 .build());
