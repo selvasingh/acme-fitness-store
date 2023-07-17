@@ -1720,7 +1720,7 @@ button i.fa {
   margin: 10px;
 }
 
-#aiChatHistory .message span {
+#aiChatHistory .message div {
   border-radius: 10px;
   padding: 10px;
   word-wrap: break-word;
@@ -1729,7 +1729,11 @@ button i.fa {
   user-select: text;
 }
 
-#aiChatHistory .message.ai span {
+#aiChatHistory .message div p:last-child {
+  margin-bottom: 0;
+}
+
+#aiChatHistory .message.ai div {
   border: 1px solid #ccc;
   background: #fff;
 }
@@ -1738,7 +1742,7 @@ button i.fa {
   text-align: right;
 }
 
-#aiChatHistory .message.customer span {
+#aiChatHistory .message.customer div {
   border: 1px solid #333;
   background: #333;
   color: #fff;
