@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
-
     @Value("${azure.openai.embedding-deployment-id}")
     private String embeddingDeploymentId;
 
@@ -30,7 +29,7 @@ public class Config {
 //    private String vectorJsonFile;
 
     @Bean
-    public ChatService planner(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
+    public ChatService chatService(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
         return new ChatService(openAIClient, vectorStore);
     }
 
@@ -45,7 +44,6 @@ public class Config {
 
     @Bean
     public VectorStore vectorStore() {
-//        return SimpleMemoryVectorStore.loadFromJsonFile(vectorJsonFile);
         return new SimpleMemoryVectorStore();
     }
 }

@@ -7,10 +7,10 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
-public class SpringChatgptSampleApplication {
+public class AcmeAskForHelpApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringChatgptSampleApplication.class, args);
+		SpringApplication.run(AcmeAskForHelpApplication.class, args);
 	}
 
 	@Bean
