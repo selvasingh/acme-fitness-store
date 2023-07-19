@@ -3,7 +3,7 @@ package com.microsoft.azure.acme.askforhelp.webapi;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
 import com.microsoft.azure.acme.askforhelp.common.AzureOpenAIClient;
-import com.microsoft.azure.acme.askforhelp.common.ChatTask;
+import com.microsoft.azure.acme.askforhelp.service.ChatService;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.SimpleMemoryVectorStore;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,12 +26,12 @@ public class Config {
     @Value("${azure.openai.api-key}")
     private String apiKey;
 
-    @Value("${vector-store.file}")
-    private String vectorJsonFile;
+//    @Value("${vector-store.file}")
+//    private String vectorJsonFile;
 
     @Bean
-    public ChatTask planner(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
-        return new ChatTask(openAIClient, vectorStore);
+    public ChatService planner(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
+        return new ChatService(openAIClient, vectorStore);
     }
 
     @Bean
@@ -45,6 +45,7 @@ public class Config {
 
     @Bean
     public VectorStore vectorStore() {
-        return SimpleMemoryVectorStore.loadFromJsonFile(vectorJsonFile);
+//        return SimpleMemoryVectorStore.loadFromJsonFile(vectorJsonFile);
+        return new SimpleMemoryVectorStore();
     }
 }

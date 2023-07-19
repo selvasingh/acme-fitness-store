@@ -1,20 +1,26 @@
-package com.microsoft.azure.acme.askforhelp.common;
+package com.microsoft.azure.acme.askforhelp.service;
 
 import com.azure.ai.openai.models.ChatCompletions;
 import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.ChatRole;
+import com.microsoft.azure.acme.askforhelp.common.AzureOpenAIClient;
 import com.microsoft.azure.acme.askforhelp.common.prompt.HomepagePromptTemplate;
 import com.microsoft.azure.acme.askforhelp.common.prompt.ProductDetailPromptTemplate;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
 import com.microsoft.azure.acme.askforhelp.common.vectorstore.RecordEntry;
+import com.microsoft.azure.acme.askforhelp.model.CatalogProductResp;
+import com.microsoft.azure.acme.askforhelp.model.Product;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ChatTask {
+@Slf4j
+public class ChatService {
 
     private final AzureOpenAIClient client;
 
@@ -36,10 +42,12 @@ public class ChatTask {
 
         // step 1. Retrieve the product details.
         Product product = getProduct(productId);
-        String productDesc = product.getDescription();
+        if (product == null) {
+            return null;
+        }
 
         // step 2. Populate the prompt template with the product details.
-        var prompt = ProductDetailPromptTemplate.formatWithContext(productDesc);
+        var prompt = ProductDetailPromptTemplate.formatWithContext(product);
         var processedMessages = new ArrayList<ChatMessage>();
         processedMessages.add(new ChatMessage(ChatRole.SYSTEM).setContent(prompt));
         processedMessages.addAll(messages);
@@ -79,8 +87,14 @@ public class ChatTask {
     }
 
     private Product getProduct(String productId) {
-        RestTemplate restTemplate = new RestTemplate();
-        Product response = restTemplate.getForObject("http://catalog/products/" + productId, Product.class);
-        return response;
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            var response = restTemplate.getForEntity("http://catalog-service/products/" + productId, CatalogProductResp.class);
+            log.info("Response code from catalog-service: {}", response.getStatusCode());
+            return response.getBody().getData();
+        } catch (HttpClientErrorException ex) {
+            log.warn("Can't get the product detail: {}", ex.getMessage());
+            return null;
+        }
     }
 }
