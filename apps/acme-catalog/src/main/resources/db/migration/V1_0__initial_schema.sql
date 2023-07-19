@@ -1,7 +1,7 @@
 create table catalog
 (
     id                varchar(36) not null primary key,
-    description       varchar(1000),
+    description       varchar(8192),
     image_url1        varchar(1000),
     image_url2        varchar(1000),
     image_url3        varchar(1000),
