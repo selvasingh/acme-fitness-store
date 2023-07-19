@@ -29,8 +29,10 @@ def generate_sql(category):
 
     sql = sql.replace('\\\'', '\'\'')
     sql = sql.rstrip(',')
+    sql += ';'
 
     print(sql)
 
 if __name__ == '__main__':
     generate_sql('bikes')
+    generate_sql('accessories')
