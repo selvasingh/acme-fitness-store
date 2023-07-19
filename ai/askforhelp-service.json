@@ -1,0 +1,14 @@
+[
+  {
+    "predicates": [
+      "Path=/chat/completions",
+      "Method=POST"
+    ],
+    "filters": [
+      "StripPrefix=0"
+    ],
+    "tags": [
+      "askforhelp"
+    ]
+  }
+]
