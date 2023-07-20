@@ -22,7 +22,7 @@ def generate_sql(category):
             single_quote(image_file),
             single_quote(item['name']),
             str(item['price']),
-            single_quote(item['shortdescription']),
+            single_quote(item['shortDescription']),
             single_quote(','.join(item['tags']))
         )
         sql += '\n(' + ', '.join(row) + '),'

@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.askforhelp.common.vectorstore;
+package com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore;
 
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +13,8 @@ public class RecordEntry {
     private final String id;
 
     private final String docId;
+
+    private final String docTitle;
 
     private final String text;
 

@@ -1,17 +1,18 @@
-package com.microsoft.azure.acme.askforhelp.service;
+package com.microsoft.azure.acme.askforhelp.webapi.service;
 
 import com.azure.ai.openai.models.ChatCompletions;
 import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.ChatRole;
-import com.microsoft.azure.acme.askforhelp.common.AzureOpenAIClient;
-import com.microsoft.azure.acme.askforhelp.common.prompt.HomepagePromptTemplate;
-import com.microsoft.azure.acme.askforhelp.common.prompt.ProductDetailPromptTemplate;
-import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
-import com.microsoft.azure.acme.askforhelp.common.vectorstore.RecordEntry;
-import com.microsoft.azure.acme.askforhelp.model.CatalogProductResp;
-import com.microsoft.azure.acme.askforhelp.model.Product;
+import com.microsoft.azure.acme.askforhelp.webapi.common.AzureOpenAIClient;
+import com.microsoft.azure.acme.askforhelp.webapi.common.prompt.HomepagePromptTemplate;
+import com.microsoft.azure.acme.askforhelp.webapi.common.prompt.ProductDetailPromptTemplate;
+import com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore.VectorStore;
+import com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore.RecordEntry;
+import com.microsoft.azure.acme.askforhelp.webapi.model.CatalogProductResp;
+import com.microsoft.azure.acme.askforhelp.webapi.model.Product;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class ChatService {
 
     private final AzureOpenAIClient client;
@@ -49,7 +51,7 @@ public class ChatService {
         // step 2. Populate the prompt template with the product details.
         var prompt = ProductDetailPromptTemplate.formatWithContext(product);
         var processedMessages = new ArrayList<ChatMessage>();
-        processedMessages.add(new ChatMessage(ChatRole.SYSTEM).setContent(prompt));
+        processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
         processedMessages.addAll(messages);
 
         // step 3. Call to OpenAI chat completion API
@@ -73,13 +75,13 @@ public class ChatService {
         var embedding = response.getData().get(0).getEmbedding();
 
         // step 2. Query Top-K nearest text chunks from the vector store
-        var candidateDocs = store.searchTopKNearest(embedding, 5, 0.4).stream()
-                .map(RecordEntry::getText).toList();
+        var candidateRecords = store.searchTopKNearest(embedding, 5, 0.4);
 
         // step 3. Populate the prompt template with the chunks
-        var prompt = HomepagePromptTemplate.formatWithContext(candidateDocs, question);
-        var processedMessages = new ArrayList<>(messages);
-        processedMessages.set(messages.size() - 1, new ChatMessage(ChatRole.USER).setContent(prompt));
+        var prompt = HomepagePromptTemplate.formatWithContext(candidateRecords, question);
+        var processedMessages = new ArrayList<ChatMessage>();
+        processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
+        processedMessages.addAll(messages);
 
         // step 4. Call to OpenAI chat completion API
         var answer = client.getChatCompletions(processedMessages);

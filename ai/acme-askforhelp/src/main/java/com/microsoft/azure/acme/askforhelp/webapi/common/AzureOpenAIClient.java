@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.askforhelp.common;
+package com.microsoft.azure.acme.askforhelp.webapi.common;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.ChatCompletions;
