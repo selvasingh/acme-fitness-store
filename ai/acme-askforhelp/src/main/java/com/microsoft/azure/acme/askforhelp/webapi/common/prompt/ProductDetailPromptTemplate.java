@@ -1,6 +1,6 @@
-package com.microsoft.azure.acme.askforhelp.common.prompt;
+package com.microsoft.azure.acme.askforhelp.webapi.common.prompt;
 
-import com.microsoft.azure.acme.askforhelp.model.Product;
+import com.microsoft.azure.acme.askforhelp.webapi.model.Product;
 
 public class ProductDetailPromptTemplate {
 

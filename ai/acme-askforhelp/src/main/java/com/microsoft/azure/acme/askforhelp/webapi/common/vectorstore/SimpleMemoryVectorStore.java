@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.askforhelp.common.vectorstore;
+package com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
