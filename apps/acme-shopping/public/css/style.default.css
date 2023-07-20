@@ -1615,6 +1615,235 @@ button i.fa {
 }
 
 /*
+   /////////////////////////////////////////////////////
+     AI CHAT
+   /////////////////////////////////////////////////////
+*/
+#aiChat {
+  user-select: none;
+  width: 320px;
+  height: calc(100% - 80px);
+  position: fixed;
+  bottom: 0;
+  right: 30px;
+  z-index: 9999;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.1s ease-out;
+}
+
+#aiChat:has(input:checked) {
+  height: 50px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#aiChat:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2)!important;
+}
+
+#aiChatTitle {
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 20px;
+  font-family: "Montserrat", Helvetica, Arial, sans-serif;
+  font-weight: 700;
+}
+
+#aiChatTitle .fa-lightbulb-o {
+  margin-right: 20px;
+}
+
+#aiChatToggle {
+  display: none;
+}
+
+#aiChatTitle #aiChatTitleCloseArea {
+  position: absolute;
+  right: 20px;
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+}
+
+#aiChatTitle #aiChatTitleOpenArea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  height: 50px;
+  width: 320px;
+}
+
+#aiChat label {
+  cursor: pointer;
+}
+
+#aiChat:has(input:checked) #aiChatTitleCloseArea {
+  display: none;
+}
+
+#aiChat:has(input:not(:checked)) #aiChatTitleOpenArea {
+  display: none;
+}
+
+#aiChatContainer {
+  height: calc(100% - 50px);
+  overflow: hidden;
+  font-size: 0.8em;
+}
+
+#aiChatHistory {
+  height: calc(100% - 100px);
+  overflow-y: auto;
+  padding: 10px;
+}
+
+#aiChatHistory::-webkit-scrollbar-track
+{
+  background-color: #F5F5F5;
+}
+
+#aiChatHistory::-webkit-scrollbar
+{
+  width: 6px;
+  background-color: #F5F5F5;
+}
+
+#aiChatHistory::-webkit-scrollbar-thumb
+{
+  background-color: #888;
+}
+
+#aiChatHistory .message {
+  margin: 10px;
+}
+
+#aiChatHistory .message div {
+  border-radius: 10px;
+  padding: 10px;
+  word-wrap: break-word;
+  box-sizing: border-box;
+  display: inline-block;
+  user-select: text;
+}
+
+#aiChatHistory .message div p:last-child {
+  margin-bottom: 0;
+}
+
+#aiChatHistory .message.ai div {
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+#aiChatHistory .message.customer {
+  text-align: right;
+}
+
+#aiChatHistory .message.customer div {
+  border: 1px solid #333;
+  background: #333;
+  color: #fff;
+}
+
+#aiChatInputboxOuter {
+  height: 100px;
+  padding: 10px;
+  position: relative;
+}
+
+#aiChatInputboxBuiltInQuestions {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  text-align: right;
+}
+
+#aiChatInputboxBuiltInQuestions .question {
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px;
+  outline: none;
+  text-align: left;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#aiChatInputboxBuiltInQuestionsRefresh {
+  border: none;
+  outline: none;
+  background: transparent;
+  margin: 2px;
+  cursor: pointer;
+}
+
+#aiChatInputboxTyping {
+  position: absolute;
+  bottom: 95px;
+  left: 0;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-style: italic;
+  color: #888;
+  display: none;
+}
+
+#aiChatInputboxInner {
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  padding: 5px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+#aiChatInputbox {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: none;
+  padding: 10px 30px 10px 10px;
+  box-sizing: border-box;
+}
+
+#aiChatInputbox::-webkit-scrollbar-track
+{
+  background-color: #F5F5F5;
+}
+
+#aiChatInputbox::-webkit-scrollbar
+{
+  width: 6px;
+  background-color: #F5F5F5;
+}
+
+#aiChatInputbox::-webkit-scrollbar-thumb
+{
+  background-color: #888;
+}
+
+#aiChatInputboxSendButton {
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/*
 
 =====================
 STYLE SWITCHER FOR DEMO
