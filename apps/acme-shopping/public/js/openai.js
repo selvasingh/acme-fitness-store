@@ -1,5 +1,5 @@
 const CONTEXT_MESSAGE_COUNT = 5;
-const API_URL = '/chat/completions?api-version=2023-03-15-preview';
+const API_URL = '/chat/completions';
 const API_HEADER = {
   "Content-Type": "application/json"
 };
