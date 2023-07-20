@@ -2,13 +2,19 @@ package com.microsoft.azure.acme.askforhelp.webapi;
 
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
-import com.microsoft.azure.acme.askforhelp.common.AzureOpenAIClient;
-import com.microsoft.azure.acme.askforhelp.service.ChatService;
-import com.microsoft.azure.acme.askforhelp.common.vectorstore.SimpleMemoryVectorStore;
-import com.microsoft.azure.acme.askforhelp.common.vectorstore.VectorStore;
+import com.azure.core.http.policy.FixedDelayOptions;
+import com.azure.core.http.policy.RetryOptions;
+import com.microsoft.azure.acme.askforhelp.webapi.common.AzureOpenAIClient;
+import com.microsoft.azure.acme.askforhelp.webapi.service.ChatService;
+import com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore.SimpleMemoryVectorStore;
+import com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+
+import java.io.IOException;
+import java.time.Duration;
 
 @Configuration
 public class Config {
@@ -25,25 +31,21 @@ public class Config {
     @Value("${azure.openai.api-key}")
     private String apiKey;
 
-//    @Value("${vector-store.file}")
-//    private String vectorJsonFile;
-
-    @Bean
-    public ChatService chatService(AzureOpenAIClient openAIClient, VectorStore vectorStore) {
-        return new ChatService(openAIClient, vectorStore);
-    }
+    @Value("vector_store.json")
+    private String vectorJsonFile;
 
     @Bean
     public AzureOpenAIClient AzureOpenAIClient() {
         var innerClient = new OpenAIClientBuilder()
             .endpoint(endpoint)
             .credential(new AzureKeyCredential(apiKey))
+            .retryOptions(new RetryOptions(new FixedDelayOptions(5, Duration.ofSeconds(1))))
             .buildClient();
         return new AzureOpenAIClient(innerClient, embeddingDeploymentId, chatDeploymentId);
     }
 
     @Bean
-    public VectorStore vectorStore() {
-        return new SimpleMemoryVectorStore();
+    public VectorStore vectorStore() throws IOException {
+        return SimpleMemoryVectorStore.loadFromJsonFile(new ClassPathResource(vectorJsonFile).getFile());
     }
 }

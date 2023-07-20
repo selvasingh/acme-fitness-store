@@ -2,8 +2,8 @@ package com.microsoft.azure.acme.askforhelp.webapi.controllers;
 
 
 import com.azure.ai.openai.models.ChatCompletions;
-import com.microsoft.azure.acme.askforhelp.service.ChatService;
-import com.microsoft.azure.acme.askforhelp.webapi.models.ChatCompletionsRequest;
+import com.microsoft.azure.acme.askforhelp.webapi.service.ChatService;
+import com.microsoft.azure.acme.askforhelp.webapi.model.ChatCompletionsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
@@ -22,7 +22,7 @@ public class ChatController {
         if (StringUtils.hasText(productId)) {
             return chatService.chatWithProduct(request.getMessages(), request.getProductId());
         } else {
-            return null;
+            return chatService.chat(request.getMessages());
         }
     }
 

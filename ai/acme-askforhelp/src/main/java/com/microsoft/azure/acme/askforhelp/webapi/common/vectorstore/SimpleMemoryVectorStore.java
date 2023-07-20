@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.askforhelp.common.vectorstore;
+package com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -68,10 +68,10 @@ public class SimpleMemoryVectorStore implements VectorStore {
         }
     }
 
-    public static SimpleMemoryVectorStore loadFromJsonFile(String filePath) {
+    public static SimpleMemoryVectorStore loadFromJsonFile(File jsonFile) {
         var reader = new ObjectMapper().reader();
         try {
-            var data = reader.readValue(new File(filePath), VectorStoreData.class);
+            var data = reader.readValue(jsonFile, VectorStoreData.class);
             return new SimpleMemoryVectorStore(data);
         } catch (IOException e) {
             throw new RuntimeException(e);

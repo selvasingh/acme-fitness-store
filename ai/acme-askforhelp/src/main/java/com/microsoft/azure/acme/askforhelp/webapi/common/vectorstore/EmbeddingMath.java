@@ -1,4 +1,4 @@
-package com.microsoft.azure.acme.askforhelp.common.vectorstore;
+package com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore;
 
 import java.util.List;
 
