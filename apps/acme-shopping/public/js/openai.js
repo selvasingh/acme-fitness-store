@@ -1,8 +1,7 @@
 const CONTEXT_MESSAGE_COUNT = 5;
-const API_URL = 'https://xxx.openai.azure.com/openai/deployments/xxx/chat/completions?api-version=2023-03-15-preview';
+const API_URL = '/chat/completions?api-version=2023-03-15-preview';
 const API_HEADER = {
-  "Content-Type": "application/json",
-  "api-key": "xxxxxxx"
+  "Content-Type": "application/json"
 };
 const BUILT_IN_QUESTIONS = [
   "I am looking for an e-bike that can run fast",
@@ -51,7 +50,7 @@ async function sendMessage() {
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: API_HEADER ?? {},
-      body: JSON.stringify({ messages: MESSAGE_HISTORY })
+      body: JSON.stringify({ messages: MESSAGE_HISTORY, productId })
     });
     const data = await response.json();
   
