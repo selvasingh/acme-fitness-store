@@ -11,7 +11,9 @@ import com.microsoft.azure.acme.askforhelp.webapi.common.vectorstore.VectorStore
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.time.Duration;
 
 @Configuration
@@ -43,7 +45,7 @@ public class Config {
     }
 
     @Bean
-    public VectorStore vectorStore() {
-        return SimpleMemoryVectorStore.loadFromJsonFile(vectorJsonFile);
+    public VectorStore vectorStore() throws IOException {
+        return SimpleMemoryVectorStore.loadFromJsonFile(new ClassPathResource(vectorJsonFile).getFile());
     }
 }
