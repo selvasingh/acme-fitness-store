@@ -9,7 +9,7 @@
 
 
 ## Prepare the Environment Variables
-1. Run `cp scripts/setup-env-variables-template.sh scripts/setup-env-variables.sh` and update the values in `setup-env-variables.sh` with your own values.
+1. Run `cp azure/setup-env-variables-template.sh azure/setup-env-variables.sh` and update the values in `setup-env-variables.sh` with your own values.
 1. Run `cp ai/setup-ai-env-variables-template.sh ai/setup-ai-env-variables.sh` and update the values in `setup-ai-env-variables.sh` with your own values.
 
 
@@ -18,7 +18,7 @@
 1. Run the following command to create an Azure OpenAI resource in the the resource group.
 
    ```bash
-   source ./scripts/setup-env-variables.sh
+   source ./azure/setup-env-variables.sh
    export OPENAI_RESOURCE_NAME=<choose-a-resource-name>
    az cognitiveservices account create \
       -n ${OPENAI_RESOURCE_NAME} \
@@ -57,7 +57,7 @@ Before building the `acme-askforhelp` service, we need to preprocess the data in
 ```bash
 cd ai && source ./setup-ai-env-variables.sh
 cd acme-askforhelp
-./preprocess.sh ../data/bikes.json,../data/accessories.json vector_store.json
+./preprocess.sh ../data/bikes.json,../data/accessories.json src/main/resources/vector_store.json
 ```
 
 
@@ -66,7 +66,7 @@ cd acme-askforhelp
 1. Prepare the new sample data and images by `./prepare-data.sh`.
 1. Redeploy `catalog-service` with the new resources:
     ```bash
-    source ./scripts/setup-env-variables.sh
+    source ./azure/setup-env-variables.sh
     az spring app deploy --name ${CATALOG_SERVICE_APP} \
     --config-file-pattern catalog/default \
     --source-path apps/acme-catalog \
