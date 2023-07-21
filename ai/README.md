@@ -57,7 +57,7 @@ Before building the `acme-askforhelp` service, we need to preprocess the data in
 ```bash
 cd ai && source ./setup-ai-env-variables.sh
 cd acme-askforhelp
-./preprocess.sh ../data/bikes.json,../data/accessories.json src/main/resources/vector_store.json
+./preprocess.sh ../data/bikes.json,../data/accessories.json,../data/additional.json src/main/resources/vector_store.json
 ```
 
 

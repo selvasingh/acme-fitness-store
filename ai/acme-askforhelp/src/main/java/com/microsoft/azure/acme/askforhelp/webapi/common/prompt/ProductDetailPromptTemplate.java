@@ -15,6 +15,8 @@ public class ProductDetailPromptTemplate {
             %s
             Full description:
             %s
+            Additional information:
+            %s
             """;
 
     public static String formatWithContext(Product product) {
@@ -22,6 +24,7 @@ public class ProductDetailPromptTemplate {
                 product.getName(),
                 String.join(",", product.getTags()),
                 product.getShortDescription(),
-                product.getDescription());
+                product.getDescription(),
+                product.getAiContent());
     }
 }

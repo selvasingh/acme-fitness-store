@@ -19,4 +19,5 @@ public class Product {
     private final String description;
     private final Double price;
     private final List<String> tags;
+    private final String aiContent;
 }

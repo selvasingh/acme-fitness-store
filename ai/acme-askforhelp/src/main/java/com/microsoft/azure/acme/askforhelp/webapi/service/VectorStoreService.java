@@ -42,7 +42,7 @@ public class VectorStoreService {
             });
             for (var product : products) {
                 log.info("String to process {}...", product.getName());
-                var textChunks = splitter.split(product.getDescription());
+                var textChunks = splitter.split(product.getDescription() + "\n" + product.getAiContent());
                 for (var chunk : textChunks) {
                     var response = client.getEmbeddings(List.of(chunk));
                     var embedding = response.getData().get(0).getEmbedding();
