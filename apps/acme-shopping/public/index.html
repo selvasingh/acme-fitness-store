@@ -123,14 +123,41 @@
         <!-- *** PROMO BAR END ***-->
 
       </div>
-    </div>
-    <div id="all">
-      <div id="content">
-        <div class="container">
+      <!-- *** FOOTER ***-->
+      <div id="footer">
+      </div>
+      <!-- /#footer-->
+      <!-- *** FOOTER END ***-->
+      <!-- *** AI CHAT ***-->
+      <div id="aiChat">
+        <div id="aiChatTitle"><i class="fa fa-lightbulb-o"></i>AI assistant
+          <input type="checkbox" id="aiChatToggle" checked>
+          <label for="aiChatToggle" id="aiChatTitleCloseArea"><i class="fa fa-times"></i></label>
+          <label for="aiChatToggle" id="aiChatTitleOpenArea"></label>
+        </div>
+        <div id="aiChatContainer">
+          <div id="aiChatHistory">
+            <div class="message ai">
+              <div>Welcome to our e-bike website! Looking for the perfect e-bike? I'm here to assist you. To get started, I can suggest some popular e-bike models based on your preferences. Just let me know your riding style, desired speed, and approximate range, and we'll find the ideal match for you.</div>
+            </div>
+          </div>
+          <div id="aiChatInputboxOuter">
+            <div id="aiChatInputboxBuiltInQuestions" style="display: none;">
+              <button id="aiChatInputboxBuiltInQuestionsRefresh"><i class="fa fa-refresh"></i></button>
+            </div>
+            <div id="aiChatInputboxTyping">AI assistant is typing...</div>
+            <div id="aiChatInputboxInner">
+              <textarea id="aiChatInputbox" placeholder="Ask anyting about our bikes..."></textarea>
+              <button id="aiChatInputboxSendButton"><i class="fa fa-paper-plane-o"></i></button>
+            </div>
+          </div>
         </div>
       </div>
-     <div id = "footer"></div>
+      <!-- /#aiChat-->
+      <!-- *** AI CHAT END ***-->
+    </div>
     <!-- #### JavaScript files ###-->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/popper.js/umd/popper.min.js"> </script>
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -139,6 +166,7 @@
     <!-- main script-->
     <script src="js/front.js"> </script>
     <script src="js/client.js"></script>
+    <script src="js/openai.js"></script>
     <script src="js/opentracing-browser-min.js"></script>
     <script>
     $(document).ready(function() {
