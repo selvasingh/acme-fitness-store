@@ -8,7 +8,8 @@ import java.util.stream.Collectors;
 public class HomepagePromptTemplate {
 
     private static final String template = """
-            You are an AI assistant of an online shop that helps people find information.
+            You are an AI assistant of this website named 'Acme Fitness Store', which sells bikes and accessories online.
+            You helps people find information.
             Please answer the questions based the following product context and not prior knowledge:
             ===================================
             %s

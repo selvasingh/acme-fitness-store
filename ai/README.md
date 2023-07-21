@@ -23,7 +23,7 @@
    az cognitiveservices account create \
       -n ${OPENAI_RESOURCE_NAME} \
       -g ${RESOURCE_GROUP} \
-      -l ${REGION} \
+      -l eastus \
       --kind OpenAI \
       --sku s0 \
       --custom-domain ${OPENAI_RESOURCE_NAME}   
@@ -63,7 +63,11 @@ cd acme-askforhelp
 
 ## Build and deploy to Azure Spring Apps
 
-1. Prepare the new sample data and images by `./prepare-data.sh`.
+1. Prepare the new sample data and images:
+   ```bash
+   cd ai && ./prepare-data.sh
+   cd ..
+   ```.
 1. Redeploy `catalog-service` with the new resources:
     ```bash
     source ./azure/setup-env-variables.sh
