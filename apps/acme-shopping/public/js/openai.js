@@ -36,7 +36,7 @@ async function sendMessage() {
   $('#aiChatInputbox').val('');
   if (!message) return;
 
-  const productId = window.location.search.split('?id=')[1];
+  const productId = window.location.search.split('?id=')[1] ?? '';
 
   $('#aiChatInputboxBuiltInQuestions').hide();
   addMessage(message, false);
