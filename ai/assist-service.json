@@ -1,0 +1,14 @@
+[
+  {
+    "predicates": [
+      "Path=/ai/*",
+      "Method=POST"
+    ],
+    "filters": [
+      "StripPrefix=0"
+    ],
+    "tags": [
+      "assist-service"
+    ]
+  }
+]

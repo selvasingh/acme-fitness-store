@@ -9,6 +9,7 @@ azure/setup-env-variables.sh
 azure/setup-db-env-variables.sh
 azure/setup-sso-variables.sh
 azure/setup-env-variables-keyvault.sh
+ai/setup-ai-env-variables.sh
 redis.json
 ad.json
 sso.json
