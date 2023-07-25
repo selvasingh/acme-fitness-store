@@ -1,22 +1,24 @@
 const CONTEXT_MESSAGE_COUNT = 5;
-const API_URL = '/chat/completions';
+const API_HELLO_URL = '/ai/hello';
+const API_QUESTION_URL = '/ai/question';
 const API_HEADER = {
   "Content-Type": "application/json"
 };
-const BUILT_IN_QUESTIONS = [
-  "I am looking for an e-bike that can run fast",
-  "Show me e-bikes that can run long distance",
-  "What's the most popular e-bikes"
-];
 
 let MESSAGE_HISTORY = [];
+let CURRENT_CONVERSATION_ID = null;
 
 function addMessage(message, senderIsAI) {
   MESSAGE_HISTORY.push({
     content: message,
     role: senderIsAI ? 'assistant' : 'user'
   });
+  localStorage[CURRENT_CONVERSATION_ID] = JSON.stringify(MESSAGE_HISTORY);
 
+  renderMessage(message, senderIsAI);
+}
+
+function renderMessage(message, senderIsAI) {
   const sender = senderIsAI ? 'ai' : 'customer';
   const messageElement = $(`<div class="message ${sender}"></div>`);
   const messageSpan = $('<div></div>');
@@ -31,6 +33,10 @@ function addMessage(message, senderIsAI) {
   $('#aiChatHistory').scrollTop($('#aiChatHistory').prop('scrollHeight'));
 }
 
+function parseProductLink(message) {
+  return message.replace(/{{(.*?)\|([^\|]+)}}/g, '[$1](/detail.html?id=$2)');
+}
+
 async function sendMessage() {
   let message = $('#aiChatInputbox').val()?.trim();
   $('#aiChatInputbox').val('');
@@ -42,45 +48,92 @@ async function sendMessage() {
   addMessage(message, false);
   $('#aiChatInputboxTyping').show();
 
-  if (MESSAGE_HISTORY.length > CONTEXT_MESSAGE_COUNT) {
-    MESSAGE_HISTORY = MESSAGE_HISTORY.slice(0 - CONTEXT_MESSAGE_COUNT);
-  }
+  const findUserRoleMessageIndexes = [];
+  MESSAGE_HISTORY.forEach((message, index) => {
+    if (message.role === 'user') {
+      findUserRoleMessageIndexes.push(index);
+    }
+  });
+  const firstUserRoleMessageIndexInContext = findUserRoleMessageIndexes.find(index => index >= MESSAGE_HISTORY.length - CONTEXT_MESSAGE_COUNT);
+
+  let context = MESSAGE_HISTORY.slice(firstUserRoleMessageIndexInContext - MESSAGE_HISTORY.length);
 
   try {
-    const response = await fetch(API_URL, {
+    const response = await fetch(API_QUESTION_URL, {
       method: 'POST',
       headers: API_HEADER ?? {},
-      body: JSON.stringify({ messages: MESSAGE_HISTORY, productId })
+      body: JSON.stringify({ messages: context, productId })
     });
     const data = await response.json();
   
-    addMessage(data.choices[0].message.content, true);
+    addMessage(parseProductLink(data.messages[0]), true);
   } finally {
     $('#aiChatInputboxTyping').hide();
   }
 }
 
-function generateBuiltInQuestions() {
-  const questionsElement = $('#aiChatInputboxBuiltInQuestions');
-  questionsElement.find('.question').remove();
+function getCurrentPage() {
+  const page = location.pathname.replace(/^\/|\.html$/g, '') || 'home';
+  return page;
+}
 
-  const questions = [];
-  while (questions.length < 3 && questions.length < BUILT_IN_QUESTIONS.length) {
-    const randomIndex = Math.floor(Math.random() * BUILT_IN_QUESTIONS.length);
-    const randomItem = BUILT_IN_QUESTIONS[randomIndex];
-    if (!questions.includes(randomItem)) {
-      questions.push(randomItem);
+function generateConversationId() {
+  return crypto.randomUUID();
+}
+
+function restoreConversation(conversationId) {
+  CURRENT_CONVERSATION_ID = conversationId;
+  MESSAGE_HISTORY = JSON.parse(localStorage[CURRENT_CONVERSATION_ID]);
+  MESSAGE_HISTORY.forEach(item => renderMessage(item.content, item.role === 'assistant'));
+}
+
+async function createNewConversation() {
+  const conversationId = generateConversationId();
+  const page = getCurrentPage();
+
+  CURRENT_CONVERSATION_ID = conversationId;
+  localStorage.CURRENT_CONVERSATION_ID = conversationId;
+
+  try {
+    $('#aiChatInputboxTyping').show();
+    const response = await fetch(API_HELLO_URL, {
+      method: 'POST',
+      headers: API_HEADER ?? {},
+      body: JSON.stringify({ conversationId, page })
+    });
+    const data = await response.json();
+    const { greeting, suggestedPrompts } = data;
+
+    if (greeting) {
+      addMessage(greeting, true);
     }
+
+    if (suggestedPrompts?.length) {
+      const questionsElement = $('#aiChatInputboxBuiltInQuestions');
+      suggestedPrompts.forEach(question => {
+        const questionElement = $(`<button class="question">${question}</button>`);
+        questionElement.click(() => {
+          $('#aiChatInputbox').val(question);
+          sendMessage();
+        });
+        questionsElement.append(questionElement);
+      });
+      questionsElement.show();
+    }
+
+    localStorage.CURRENT_CONVERSATION_ID = conversationId;
+    CURRENT_CONVERSATION_ID = conversationId;
+  } finally {
+    $('#aiChatInputboxTyping').hide();
+  }
+}
+
+function initConversation() {
+  if (localStorage.CURRENT_CONVERSATION_ID) {
+    return restoreConversation(localStorage.CURRENT_CONVERSATION_ID);
   }
 
-  questions.forEach(question => {
-    const questionElement = $(`<button class="question">${question}</button>`);
-    questionElement.click(() => {
-      $('#aiChatInputbox').val(question);
-      sendMessage();
-    });
-    questionsElement.prepend(questionElement);
-  });
+  createNewConversation();
 }
 
 $(document).ready(function () {
@@ -93,6 +146,5 @@ $(document).ready(function () {
     }
   });
   
-  generateBuiltInQuestions();
-  $('#aiChatInputboxBuiltInQuestionsRefresh').click(generateBuiltInQuestions);
+  initConversation();
 });
