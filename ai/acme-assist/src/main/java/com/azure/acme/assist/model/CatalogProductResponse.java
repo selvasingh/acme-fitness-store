@@ -9,7 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class CatalogProductResponse {
 
-	private final Product data;
-	
-	private final int status;
+    private final Product data;
+
+    private final int status;
 }

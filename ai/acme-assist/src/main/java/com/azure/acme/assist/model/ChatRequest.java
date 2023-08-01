@@ -9,17 +9,26 @@ import lombok.Data;
 @Data
 public class ChatRequest {
 
-	private String page;
+    /**
+     * (Optional) Name of the request page. Used as the context for the conversation.
+     */
+    private String page;
 
-	private String productId;
+    /**
+     * (Optional) ID of the product. Used as the context for the conversation.
+     */
+    private String productId;
 
-	private List<Message> messages;
+    /**
+     * The chat history of the conversation. The last message must be in the user role.
+     */
+    private List<Message> messages;
 
-	@Data
-	public static class Message {
+    @Data
+    public static class Message {
 
-		private ChatRole role;
+        private ChatRole role;
 
-		private String content;
-	}
+        private String content;
+    }
 }

@@ -7,5 +7,8 @@ import lombok.Data;
 @Data
 public class ChatResponse {
 
-	private List<String> messages;
+    /**
+     * The candidate answers for the chat. Only one is provided for now.
+     */
+    private List<String> messages;
 }

@@ -4,14 +4,22 @@ import lombok.Data;
 
 /**
  * Model of request body of Greeting API
- *
  */
 @Data
 public class GreetingRequest {
 
-	private String page;
+    /**
+     * Name of the request page
+     */
+    private String page;
 
-	private String userId;
+    /**
+     * ID of current user
+     */
+    private String userId;
 
-	private String conversationId;
+    /**
+     * ID of current conversation
+     */
+    private String conversationId;
 }

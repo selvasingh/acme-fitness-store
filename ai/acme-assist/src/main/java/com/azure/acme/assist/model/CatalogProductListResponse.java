@@ -11,6 +11,6 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class CatalogProductListResponse {
 
-	private final List<Product> data;
-	
+    private final List<Product> data;
+
 }

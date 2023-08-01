@@ -22,38 +22,38 @@ import com.azure.acme.assist.model.SuggestedPrompts;
 @RequestMapping("/ai")
 public class FitAssistController {
 
-	@Autowired
-	private ChatService chatService;
+    @Autowired
+    private ChatService chatService;
 
-	@Autowired
-	private SuggestedPromptService suggestedPromptService;
+    @Autowired
+    private SuggestedPromptService suggestedPromptService;
 
-	@PostMapping("/question")
-	public ChatResponse chatCompletion(@RequestBody ChatRequest request) {
-		List<String> ret = chatService.chat(request.getMessages(), request.getProductId());
-		ChatResponse response = new ChatResponse();
-		response.setMessages(ret);
-		return response;
-	}
+    @PostMapping("/question")
+    public ChatResponse chatCompletion(@RequestBody ChatRequest request) {
+        List<String> ret = chatService.chat(request.getMessages(), request.getProductId());
+        ChatResponse response = new ChatResponse();
+        response.setMessages(ret);
+        return response;
+    }
 
-	@PostMapping("/hello")
-	public GreetingResponse greeting(@RequestBody GreetingRequest request) {
-		SuggestedPrompts prompts = suggestedPromptService.getSuggestedPrompts(request.getPage());
+    @PostMapping("/hello")
+    public GreetingResponse greeting(@RequestBody GreetingRequest request) {
+        SuggestedPrompts prompts = suggestedPromptService.getSuggestedPrompts(request.getPage());
 
-		if (prompts == null) {
-			return null;
-		}
+        if (prompts == null) {
+            return null;
+        }
 
-		GreetingResponse response = new GreetingResponse();
-		response.setConversationId(request.getConversationId());
-		response.setGreeting(prompts.getGreeting());
-		response.setSuggestedPrompts(prompts.getPrompts());
-		return response;
-	}
+        GreetingResponse response = new GreetingResponse();
+        response.setConversationId(request.getConversationId());
+        response.setGreeting(prompts.getGreeting());
+        response.setSuggestedPrompts(prompts.getPrompts());
+        return response;
+    }
 
-	@ExceptionHandler(IllegalArgumentException.class)
-	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	public @ResponseBody String handleException(IllegalArgumentException ex) {
-		return ex.getMessage();
-	}
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public @ResponseBody String handleException(IllegalArgumentException ex) {
+        return ex.getMessage();
+    }
 }

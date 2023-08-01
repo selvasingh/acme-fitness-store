@@ -30,14 +30,14 @@ public class OpenAIConfig {
 
     @Value("vector_store.json")
     private String vectorJsonFile;
-    
+
     @Bean
     public AzureOpenAIClient AzureOpenAIClient() {
         var innerClient = new OpenAIClientBuilder()
-            .endpoint(endpoint)
-            .credential(new AzureKeyCredential(apiKey))
-            .retryOptions(new RetryOptions(new FixedDelayOptions(5, Duration.ofSeconds(1))))
-            .buildClient();
+                .endpoint(endpoint)
+                .credential(new AzureKeyCredential(apiKey))
+                .retryOptions(new RetryOptions(new FixedDelayOptions(5, Duration.ofSeconds(1))))
+                .buildClient();
         return new AzureOpenAIClient(innerClient, embeddingDeploymentId, chatDeploymentId);
     }
 

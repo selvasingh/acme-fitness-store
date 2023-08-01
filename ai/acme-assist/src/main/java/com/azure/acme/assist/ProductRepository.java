@@ -23,35 +23,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProductRepository {
 
-	@Value("${catalogService:http://catalog-service}")
-	@Getter
-	private String catalogService;
+    @Value("${catalogService:http://catalog-service}")
+    @Getter
+    private String catalogService;
 
-	public Product getProductById(String id) {
-		if (Strings.isEmpty(id)) {
-			return null;
-		}
-		try {
-			RestTemplate restTemplate = new RestTemplate();
-			var response = restTemplate.getForEntity(catalogService + "/products/" + id, CatalogProductResponse.class);
-			log.info("Response code from catalog-service: {}", response.getStatusCode());
-			return response.getBody().getData();
-		} catch (HttpClientErrorException ex) {
-			log.warn("Can't get the product detail: {}", ex.getMessage());
-			return null;
-		}
-	}
+    public Product getProductById(String id) {
+        if (Strings.isEmpty(id)) {
+            return null;
+        }
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            var response = restTemplate.getForEntity(catalogService + "/products/" + id, CatalogProductResponse.class);
+            log.info("Response code from catalog-service: {}", response.getStatusCode());
+            return response.getBody().getData();
+        } catch (HttpClientErrorException ex) {
+            log.warn("Can't get the product detail: {}", ex.getMessage());
+            return null;
+        }
+    }
 
-	private static List<Product> products;
+    private static List<Product> products;
 
-	@PostConstruct
-	public List<Product> getProductList() {
-		if (products == null) {
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<CatalogProductListResponse> response = restTemplate
-					.getForEntity(catalogService + "/products", CatalogProductListResponse.class);
-			products = response.getBody().getData();
-		}
-		return products;
-	}
+    @PostConstruct
+    public List<Product> getProductList() {
+        if (products == null) {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<CatalogProductListResponse> response = restTemplate
+                    .getForEntity(catalogService + "/products", CatalogProductListResponse.class);
+            products = response.getBody().getData();
+        }
+        return products;
+    }
 }

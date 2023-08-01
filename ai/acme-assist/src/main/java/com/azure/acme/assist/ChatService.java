@@ -20,106 +20,119 @@ import com.azure.ai.openai.models.ChatRole;
 @Service
 public class ChatService {
 
-	@Autowired
-	private AzureOpenAIClient client;
+    @Autowired
+    private AzureOpenAIClient client;
 
-	@Autowired
-	private VectorStore store;
+    @Autowired
+    private VectorStore store;
 
-	@Autowired
-	private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-	public List<String> chat(List<ChatRequest.Message> messages, String productId) {
+    /**
+     * Chat with the OpenAI API. Use the product details as the context.
+     *
+     * @param messages the chat messages
+     * @return the chat response
+     */
+    public List<String> chat(List<ChatRequest.Message> messages, String productId) {
 
-		validateMessage(messages);
+        validateMessage(messages);
 
-		// step 1. Retrieve the product details.
-		Product product = productRepository.getProductById(productId);
-		if (product == null) {
-			return chat(messages);
-		}
+        // step 1. Retrieve the product details.
+        Product product = productRepository.getProductById(productId);
+        if (product == null) {
+            return chat(messages);
+        }
 
-		// step 2. Populate the prompt template with the product details.
-		var prompt = ProductDetailPromptTemplate.formatWithContext(product);
-		var processedMessages = new ArrayList<ChatMessage>();
-		processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
+        // step 2. Populate the prompt template with the product details.
+        var prompt = ProductDetailPromptTemplate.formatWithContext(product);
+        var processedMessages = new ArrayList<ChatMessage>();
+        processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
 
-		List<ChatMessage> list = new ArrayList<>();
-		for (ChatRequest.Message line : messages) {
-			list.add(new ChatMessage(line.getRole(), line.getContent()));
-		}
-		processedMessages.addAll(list);
+        List<ChatMessage> list = new ArrayList<>();
+        for (ChatRequest.Message line : messages) {
+            list.add(new ChatMessage(line.getRole(), line.getContent()));
+        }
+        processedMessages.addAll(list);
 
-		// step 3. Call to OpenAI chat completion API
-		var answer = client.getChatCompletions(processedMessages);
-		List<String> ret = new ArrayList<>();
-		for (ChatChoice choice : answer.getChoices()) {
-			if (choice.getMessage() != null && choice.getMessage().getContent() != null) {
-				ret.add(filterMessage(choice.getMessage().getContent()));
-			}
-		}
-		return ret;
-	}
+        // step 3. Call to OpenAI chat completion API
+        var answer = client.getChatCompletions(processedMessages);
+        List<String> ret = new ArrayList<>();
+        for (ChatChoice choice : answer.getChoices()) {
+            if (choice.getMessage() != null && choice.getMessage().getContent() != null) {
+                ret.add(filterMessage(choice.getMessage().getContent()));
+            }
+        }
+        return ret;
+    }
 
-	public List<String> chat(List<ChatRequest.Message> messages) {
+    /**
+     * Chat with the OpenAI API. Search the vector store for the top 5 nearest text chunks
+     * to the questions and use them as the context.
+     *
+     * @param messages the chat messages
+     * @return the chat response
+     */
+    public List<String> chat(List<ChatRequest.Message> messages) {
 
-		validateMessage(messages);
+        validateMessage(messages);
 
-		var lastUserMessage = messages.get(messages.size() - 1);
-		String question = lastUserMessage.getContent();
+        var lastUserMessage = messages.get(messages.size() - 1);
+        String question = lastUserMessage.getContent();
 
-		// step 1. Convert the user's query text to an embedding
-		var response = client.getEmbeddings(List.of(question));
-		var embedding = response.getData().get(0).getEmbedding();
+        // step 1. Convert the user's query text to an embedding
+        var response = client.getEmbeddings(List.of(question));
+        var embedding = response.getData().get(0).getEmbedding();
 
-		// step 2. Query Top-K nearest text chunks from the vector store
-		var candidateRecords = store.searchTopKNearest(embedding, 5, 0.4);
+        // step 2. Query Top-K nearest text chunks from the vector store
+        var candidateRecords = store.searchTopKNearest(embedding, 5, 0.4);
 
-		// step 3. Populate the prompt template with the chunks
-		var prompt = HomepagePromptTemplate.formatWithContext(candidateRecords, question);
-		var processedMessages = new ArrayList<ChatMessage>();
-		processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
-		List<ChatMessage> list = new ArrayList<>();
-		for (ChatRequest.Message line : messages) {
-			list.add(new ChatMessage(line.getRole(), line.getContent()));
-		}
-		processedMessages.addAll(list);
+        // step 3. Populate the prompt template with the chunks
+        var prompt = HomepagePromptTemplate.formatWithContext(candidateRecords, question);
+        var processedMessages = new ArrayList<ChatMessage>();
+        processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
+        List<ChatMessage> list = new ArrayList<>();
+        for (ChatRequest.Message line : messages) {
+            list.add(new ChatMessage(line.getRole(), line.getContent()));
+        }
+        processedMessages.addAll(list);
 
-		// step 4. Call to OpenAI chat completion API
-		var answer = client.getChatCompletions(processedMessages);
+        // step 4. Call to OpenAI chat completion API
+        var answer = client.getChatCompletions(processedMessages);
 
-		List<String> ret = new ArrayList<>();
-		for (ChatChoice choice : answer.getChoices()) {
-			if (choice.getMessage() != null && choice.getMessage().getContent() != null) {
-				ret.add(filterMessage(choice.getMessage().getContent()));
-			}
-		}
-		return ret;
-	}
+        List<String> ret = new ArrayList<>();
+        for (ChatChoice choice : answer.getChoices()) {
+            if (choice.getMessage() != null && choice.getMessage().getContent() != null) {
+                ret.add(filterMessage(choice.getMessage().getContent()));
+            }
+        }
+        return ret;
+    }
 
-	private static void validateMessage(List<ChatRequest.Message> messages) {
-		if (messages == null || messages.isEmpty()) {
-			throw new IllegalArgumentException("message shouldn't be empty.");
-		}
+    private static void validateMessage(List<ChatRequest.Message> messages) {
+        if (messages == null || messages.isEmpty()) {
+            throw new IllegalArgumentException("message shouldn't be empty.");
+        }
 
-		if (messages.get(0).getRole() != ChatRole.USER) {
-			throw new IllegalArgumentException("The first message should be in user role.");
-		}
+        if (messages.get(0).getRole() != ChatRole.USER) {
+            throw new IllegalArgumentException("The first message should be in user role.");
+        }
 
-		var lastUserMessage = messages.get(messages.size() - 1);
-		if (lastUserMessage.getRole() != ChatRole.USER) {
-			throw new IllegalArgumentException("The last message should be in user role.");
-		}
-	}
+        var lastUserMessage = messages.get(messages.size() - 1);
+        if (lastUserMessage.getRole() != ChatRole.USER) {
+            throw new IllegalArgumentException("The last message should be in user role.");
+        }
+    }
 
-	private String filterMessage(String content) {
-		if (Strings.isEmpty(content)) {
-			return "";
-		}
-		List<Product> products = productRepository.getProductList();
-		for (Product product : products) {
-			content = content.replace(product.getName(), "{{" + product.getName() + "|" + product.getId() + "}}");
-		}
-		return content;
-	}
+    private String filterMessage(String content) {
+        if (Strings.isEmpty(content)) {
+            return "";
+        }
+        List<Product> products = productRepository.getProductList();
+        for (Product product : products) {
+            content = content.replace(product.getName(), "{{" + product.getName() + "|" + product.getId() + "}}");
+        }
+        return content;
+    }
 }

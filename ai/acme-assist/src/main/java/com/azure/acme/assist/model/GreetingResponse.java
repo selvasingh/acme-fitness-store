@@ -7,9 +7,18 @@ import lombok.Data;
 @Data
 public class GreetingResponse {
 
-	private String conversationId;
-	
-	private String greeting;
-	
-	private List<String> suggestedPrompts;
+    /**
+     * ID of current conversation
+     */
+    private String conversationId;
+
+    /**
+     * Greeting message for the page
+     */
+    private String greeting;
+
+    /**
+     * List of suggested prompts for the page
+     */
+    private List<String> suggestedPrompts;
 }

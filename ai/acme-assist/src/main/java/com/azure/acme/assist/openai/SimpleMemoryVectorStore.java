@@ -14,6 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * Simple in-memory implementation of the vector store. 
+ * Support saving to and loading from a json file. Used for demo purposes only.
+ */
 public class SimpleMemoryVectorStore implements VectorStore {
 
     private final VectorStoreData data;

@@ -7,11 +7,23 @@ import lombok.Data;
 @Data
 public class SuggestedPrompts {
 
-	private String page;
-	
-	private String greeting;
+    /**
+     * Name of the request page
+     */
+    private String page;
 
-	private List<String> prompts;
-	
-	private boolean isDefault;
+    /**
+     * Greeting message for the page
+     */
+    private String greeting;
+
+    /**
+     * List of suggested prompts for the page
+     */
+    private List<String> prompts;
+
+    /**
+     * If these suggestion prompts used as the default
+     */
+    private boolean isDefault;
 }
