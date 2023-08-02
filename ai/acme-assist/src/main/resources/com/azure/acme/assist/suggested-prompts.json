@@ -1,0 +1,12 @@
+[
+	{
+		"page": "home",
+		"default": true,
+		"greeting": "Welcome to ACME FITNESS! Looking for the perfect e-bike and accessories? I'm here to assist you. To get started, I can suggest some popular e-bike models based on your preferences. Just let me know your riding style, desired speed, and approximate range, and we'll find the ideal match for you.",
+		"prompts": [
+			"I want an e-bike that can keep up with city traffic.",
+			"Show me e-bikes with long battery life for my daily commute.",
+			"What are the most popular e-bike models for city riders?"
+		]
+	}
+]
