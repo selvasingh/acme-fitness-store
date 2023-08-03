@@ -1,6 +1,6 @@
 const CONTEXT_MESSAGE_COUNT = 5;
-const API_HELLO_URL = '/ai/hello';
-const API_QUESTION_URL = '/ai/question';
+const API_HELLO_URL = 'https://springone-acme-fitness-store-gateway-00d46.svc.azuremicroservices.io/ai/hello';
+const API_QUESTION_URL = 'https://springone-acme-fitness-store-gateway-00d46.svc.azuremicroservices.io/ai/question';
 const API_HEADER = {
   "Content-Type": "application/json"
 };
@@ -81,6 +81,17 @@ function generateConversationId() {
   return crypto.randomUUID();
 }
 
+function clearCurrentConversation() {
+  if (!CURRENT_CONVERSATION_ID) {
+    return;
+  }
+
+  MESSAGE_HISTORY = [];
+  localStorage[CURRENT_CONVERSATION_ID] = JSON.stringify(MESSAGE_HISTORY);
+
+  $('#aiChatHistory').empty();
+}
+
 function restoreConversation(conversationId) {
   CURRENT_CONVERSATION_ID = conversationId;
   MESSAGE_HISTORY = JSON.parse(localStorage[CURRENT_CONVERSATION_ID]);
@@ -136,6 +147,10 @@ function initConversation() {
   createNewConversation();
 }
 
+function changeChatToggle() {
+  localStorage.chatToggleClosed = $('#aiChatToggle').prop('checked');
+}
+
 $(document).ready(function () {
   $('#aiChatInputboxSendButton').click(sendMessage);
   $('#aiChatInputbox').keypress(function (e) {
@@ -145,6 +160,9 @@ $(document).ready(function () {
       return false;
     }
   });
+  $('#aiChatTitleClearButton').click(clearCurrentConversation);
+  $('#aiChatToggle').change(changeChatToggle);
+  $('#aiChatToggle').prop('checked', localStorage.chatToggleClosed !== 'false')
   
   initConversation();
 });
