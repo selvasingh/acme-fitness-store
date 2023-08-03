@@ -250,7 +250,7 @@
                                 </td>\
                                 <td>' + item.price + '</td>\
                                 <td>$0.00</td>\
-                                <td>' + (item.price.replaceAll(',', '') * item.quantity).toFixed(2).toLocaleString("en-US") + '</td>\
+                                <td>' + Number((item.price.replaceAll(',', '') * item.quantity).toFixed(2)).toLocaleString("en-US") + '</td>\
                                 <td>\
                                   <a href="#"><i class="fa fa-trash-o"></i></a>\
                                 </td>\
