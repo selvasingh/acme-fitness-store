@@ -153,6 +153,7 @@ function changeChatToggle() {
 
 function aiChatToggleOpen() {
   $('#aiChatToggle').prop('checked', false);
+  localStorage.chatToggleClosed = false;
 }
 
 $(document).ready(function () {
