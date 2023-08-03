@@ -1658,6 +1658,19 @@ button i.fa {
   display: none;
 }
 
+#aiChatTitle #aiChatTitleClearButton {
+  position: absolute;
+  right: 40px;
+  display: inline-block;
+  height: 50px;
+  line-height: 50px;
+  font-size: 1.2em;
+  outline: none;
+  background: none;
+  border: none;
+  color: #555;
+}
+
 #aiChatTitle #aiChatTitleCloseArea {
   position: absolute;
   right: 20px;
@@ -1676,11 +1689,13 @@ button i.fa {
   width: 320px;
 }
 
-#aiChat label {
+#aiChat label,
+#aiChat button {
   cursor: pointer;
 }
 
-#aiChat:has(input:checked) #aiChatTitleCloseArea {
+#aiChat:has(input:checked) #aiChatTitleCloseArea,
+#aiChat:has(input:checked) #aiChatTitleClearButton {
   display: none;
 }
 
@@ -1718,6 +1733,21 @@ button i.fa {
 
 #aiChatHistory .message {
   margin: 10px;
+  position: relative;
+}
+
+#aiChatHistory .message.ai {
+  padding-bottom: 1.2em;
+}
+
+#aiChatHistory .message.ai::after {
+  content: "AI-generated content";
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  font-size: 0.8em;
+  font-style: italic;
+  color: #ccc;
 }
 
 #aiChatHistory .message div {
