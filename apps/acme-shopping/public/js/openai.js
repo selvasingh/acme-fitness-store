@@ -1,6 +1,6 @@
 const CONTEXT_MESSAGE_COUNT = 5;
-const API_HELLO_URL = 'https://springone-acme-fitness-store-gateway-00d46.svc.azuremicroservices.io/ai/hello';
-const API_QUESTION_URL = 'https://springone-acme-fitness-store-gateway-00d46.svc.azuremicroservices.io/ai/question';
+const API_HELLO_URL = '/ai/hello';
+const API_QUESTION_URL = '/ai/question';
 const API_HEADER = {
   "Content-Type": "application/json"
 };
@@ -151,6 +151,10 @@ function changeChatToggle() {
   localStorage.chatToggleClosed = $('#aiChatToggle').prop('checked');
 }
 
+function aiChatToggleOpen() {
+  $('#aiChatToggle').prop('checked', false);
+}
+
 $(document).ready(function () {
   $('#aiChatInputboxSendButton').click(sendMessage);
   $('#aiChatInputbox').keypress(function (e) {
@@ -162,7 +166,8 @@ $(document).ready(function () {
   });
   $('#aiChatTitleClearButton').click(clearCurrentConversation);
   $('#aiChatToggle').change(changeChatToggle);
-  $('#aiChatToggle').prop('checked', localStorage.chatToggleClosed !== 'false')
+  $('#aiChatToggle').prop('checked', localStorage.chatToggleClosed !== 'false');
+  $('body').delegate('#aiChatAskBtn', 'click', aiChatToggleOpen);
   
   initConversation();
 });
