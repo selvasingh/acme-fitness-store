@@ -170,11 +170,11 @@
 .navbar .currency-area select {
   position: absolute;
   display: inline-block;
-  left: 750px;
+  left: 600px;
   bottom: 13px;
   background: none;
   outline: none;
-  max-width: 70px;
+  max-width: 80px;
 }
 
 .navbar .search-area-inner .close-btn {
@@ -2402,16 +2402,11 @@ STYLE SWITCHER FOR DEMO
   box-shadow: 0 0 0 0.2rem rgba(194, 123, 170, 0.5);
 }
 
-.btn-outline-secondary {
+.btn-outline-secondary,
+.btn-outline-secondary:hover {
   color: #999;
   background-color: transparent;
   background-image: none;
-  border-color: #999;
-}
-
-.btn-outline-secondary:hover {
-  color: #fff;
-  background-color: #999;
   border-color: #999;
 }
 
