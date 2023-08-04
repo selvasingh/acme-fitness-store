@@ -1635,6 +1635,7 @@ button i.fa {
 #aiChat:has(input:checked) {
   height: 50px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: none;
 }
 
 #aiChat:hover {
