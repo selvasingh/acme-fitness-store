@@ -24,6 +24,7 @@ function renderMessage(message, senderIsAI) {
   const messageSpan = $('<div></div>');
 
   if (senderIsAI) {
+    message = parseProductLink(message);
     messageSpan.html(marked.parse(message));
   } else {
     messageSpan.text(message);
@@ -35,6 +36,10 @@ function renderMessage(message, senderIsAI) {
 
 function parseProductLink(message) {
   return message.replace(/{{(.*?)\|([^\|]+)}}/g, '[$1](/detail.html?id=$2)');
+}
+
+function filterProductMetadata(message) {
+  return message.replace(/{{(.*?)\|([^\|]+)}}/g, '$1');
 }
 
 async function sendMessage() {
@@ -57,6 +62,11 @@ async function sendMessage() {
   const firstUserRoleMessageIndexInContext = findUserRoleMessageIndexes.find(index => index >= MESSAGE_HISTORY.length - CONTEXT_MESSAGE_COUNT);
 
   let context = MESSAGE_HISTORY.slice(firstUserRoleMessageIndexInContext - MESSAGE_HISTORY.length);
+  context = JSON.parse(JSON.stringify(context));
+  context.map(message => {
+    message.content = filterProductMetadata(message.content);
+    return message;
+  });
 
   try {
     const response = await fetch(API_QUESTION_URL, {
@@ -66,7 +76,7 @@ async function sendMessage() {
     });
     const data = await response.json();
   
-    addMessage(parseProductLink(data.messages[0]), true);
+    addMessage(data.messages[0], true);
   } finally {
     $('#aiChatInputboxTyping').hide();
   }
