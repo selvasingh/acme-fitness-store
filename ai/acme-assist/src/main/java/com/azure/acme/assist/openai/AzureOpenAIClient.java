@@ -28,18 +28,26 @@ public class AzureOpenAIClient {
     private final String chatDeploymentId;
 
     public Embeddings getEmbeddings(List<String> texts) {
+        long startTime = System.currentTimeMillis();
         var response = client.getEmbeddings(embeddingDeploymentId,
                 new EmbeddingsOptions(texts).setModel(EMBEDDING_MODEL));
-        log.info("Finished an embedding call with {} tokens.", response.getUsage().getTotalTokens());
+        long endTime = System.currentTimeMillis();
+        log.info("Finished an embedding call with {} tokens in {} milliseconds.",
+                response.getUsage().getTotalTokens(),
+                endTime - startTime);
         return response;
     }
 
     public ChatCompletions getChatCompletions(List<ChatMessage> messages) {
+        long startTime = System.currentTimeMillis();
         var chatCompletionsOptions = new ChatCompletionsOptions(messages)
                 .setModel(CHAT_COMPLETION_MODEL)
                 .setTemperature(TEMPERATURE);
         var response = client.getChatCompletions(chatDeploymentId, chatCompletionsOptions);
-        log.info("Finished a chat completion call with {} tokens", response.getUsage().getTotalTokens());
+        long endTime = System.currentTimeMillis();
+        log.info("Finished a chat completion call with {} tokens in {} milliseconds.",
+                response.getUsage().getTotalTokens(),
+                endTime - startTime);
         return response;
     }
 }
