@@ -1,17 +1,22 @@
 package com.azure.acme.assist.openai;
 
-import java.io.IOException;
-import java.time.Duration;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-
+import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.http.policy.FixedDelayOptions;
 import com.azure.core.http.policy.RetryOptions;
+import org.springframework.ai.core.prompt.SystemPromptTemplate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
+
+import java.io.IOException;
+import java.time.Duration;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Configuration
 public class OpenAIConfig {
@@ -31,14 +36,30 @@ public class OpenAIConfig {
     @Value("vector_store.json")
     private String vectorJsonFile;
 
+
     @Bean
-    public AzureOpenAIClient AzureOpenAIClient() {
+    public SystemPromptTemplate productDetailSystemPromptTemplate() {
+        Resource resource = new ClassPathResource("/prompts/product-detail.st");
+        try {
+            return new SystemPromptTemplate(StreamUtils.copyToString(resource.getInputStream(), UTF_8));
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not create input stream from " + resource, ex);
+        }
+    }
+
+    @Bean
+    public OpenAIClient openAiClient() {
         var innerClient = new OpenAIClientBuilder()
                 .endpoint(endpoint)
                 .credential(new AzureKeyCredential(apiKey))
                 .retryOptions(new RetryOptions(new FixedDelayOptions(5, Duration.ofSeconds(1))))
                 .buildClient();
-        return new AzureOpenAIClient(innerClient, embeddingDeploymentId, chatDeploymentId);
+        return innerClient;
+    }
+
+    @Bean
+    public AcmeAzureOpenAIClient AzureOpenAIClient(OpenAIClient openAIClient) {
+        return new AcmeAzureOpenAIClient(openAIClient, embeddingDeploymentId, chatDeploymentId);
     }
 
     @Bean

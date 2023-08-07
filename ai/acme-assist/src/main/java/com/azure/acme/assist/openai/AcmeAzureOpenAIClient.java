@@ -1,11 +1,7 @@
 package com.azure.acme.assist.openai;
 
 import com.azure.ai.openai.OpenAIClient;
-import com.azure.ai.openai.models.ChatCompletions;
-import com.azure.ai.openai.models.ChatCompletionsOptions;
-import com.azure.ai.openai.models.ChatMessage;
-import com.azure.ai.openai.models.Embeddings;
-import com.azure.ai.openai.models.EmbeddingsOptions;
+import com.azure.ai.openai.models.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +9,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
-public class AzureOpenAIClient {
+public class AcmeAzureOpenAIClient {
 
     private static final String EMBEDDING_MODEL = "text-embedding-ada-002";
 

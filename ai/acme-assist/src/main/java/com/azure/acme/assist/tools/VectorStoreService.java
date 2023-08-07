@@ -1,35 +1,25 @@
 package com.azure.acme.assist.tools;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import com.azure.acme.assist.model.Product;
+import com.azure.acme.assist.openai.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.azure.acme.assist.model.Product;
-import com.azure.acme.assist.openai.AzureOpenAIClient;
-import com.azure.acme.assist.openai.RecordEntry;
-import com.azure.acme.assist.openai.SimpleMemoryVectorStore;
-import com.azure.acme.assist.openai.TextSplitter;
-import com.azure.acme.assist.openai.VectorStore;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 public class VectorStoreService {
 
     @Autowired
-    private AzureOpenAIClient client;
+    private AcmeAzureOpenAIClient client;
 
     @Autowired
     private VectorStore vectorStore;

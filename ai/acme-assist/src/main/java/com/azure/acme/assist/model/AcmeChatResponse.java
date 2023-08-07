@@ -1,11 +1,11 @@
 package com.azure.acme.assist.model;
 
-import java.util.List;
-
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class ChatResponse {
+public class AcmeChatResponse {
 
     /**
      * The candidate answers for the chat. Only one is provided for now.
