@@ -171,31 +171,8 @@
     </div>
     <!-- /#footer-->
     <!-- *** FOOTER END ***-->
-    <!-- *** AI CHAT ***-->
-    <div id="aiChat">
-      <div id="aiChatTitle"><i class="fa fa-lightbulb-o"></i>FitAssist
-        <input type="checkbox" id="aiChatToggle" checked>
-        <button id="aiChatTitleClearButton"><i class="fa fa-undo" aria-hidden="true"></i></button>
-        <label for="aiChatToggle" id="aiChatTitleCloseArea"><i class="fa fa-times"></i></label>
-        <label for="aiChatToggle" id="aiChatTitleOpenArea"></label>
-      </div>
-      <div id="aiChatContainer">
-        <div id="aiChatHistory"></div>
-        <div id="aiChatInputboxOuter">
-          <div id="aiChatInputboxBuiltInQuestions" style="display: none;"></div>
-          <div id="aiChatInputboxTyping">FitAssist is typing...</div>
-          <div id="aiChatInputboxInner">
-            <textarea id="aiChatInputbox" placeholder="Ask anything about our bikes..."></textarea>
-            <button id="aiChatInputboxSendButton"><i class="fa fa-paper-plane-o"></i></button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- /#aiChat-->
-    <!-- *** AI CHAT END ***-->
   </div>
   <!-- #### JavaScript files ###-->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/popper.js/umd/popper.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
@@ -204,7 +181,6 @@
   <!-- main script-->
   <script src="js/front.js"></script>
   <script src="js/client.js"></script>
-  <script src="js/openai.js"></script>
   <script src="js/jwt-decode.min.js"></script>
   <script>
     $(document).ready(function () {
