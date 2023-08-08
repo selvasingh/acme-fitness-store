@@ -37,17 +37,15 @@
       --deployment-name text-embedding-ada-002 \
       --model-name text-embedding-ada-002 \
       --model-version "2"  \
-      --model-format OpenAI \
-      --scale-settings-scale-type "Standard"
+      --model-format OpenAI
 
     az cognitiveservices account deployment create \
       -g ${RESOURCE_GROUP} \
       -n ${OPENAI_RESOURCE_NAME} \
-      --deployment-name gpt-35-turbo \
-      --model-name gpt-35-turbo \
-      --model-version "0301"  \
-      --model-format OpenAI \
-      --scale-settings-scale-type "Standard"     
+      --deployment-name gpt-35-turbo-16k \
+      --model-name gpt-35-turbo-16k \
+      --model-version "0613"  \
+      --model-format OpenAI
    ```
 
 
@@ -86,7 +84,7 @@ cd acme-assist
         --app-name ${AI_APP} \
         --routes-file assist-service.json
     az spring app deploy --name ${AI_APP} \
-        --source-path assist-service \
+        --source-path acme-assist \
         --build-env BP_JVM_VERSION=17 \
         --env AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT} AZURE_OPENAI_APIKEY=${AZURE_OPENAI_APIKEY} AZURE_OPENAI_CHATDEPLOYMENTID=${AZURE_OPENAI_CHATDEPLOYMENTID} AZURE_OPENAI_EMBEDDINGDEPLOYMENTID=${AZURE_OPENAI_EMBEDDINGDEPLOYMENTID}
     ```

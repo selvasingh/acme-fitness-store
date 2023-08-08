@@ -1,6 +1,10 @@
 package com.azure.acme.assist.prompt;
 
 import com.azure.acme.assist.model.Product;
+import com.azure.acme.assist.openai.RecordEntry;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductDetailPromptTemplate {
 
@@ -15,13 +19,23 @@ public class ProductDetailPromptTemplate {
             %s
             Full description:
             %s
+            ==================================
+            Then try to improve your answer the following additional information:
+            %s
             """;
 
-    public static String formatWithContext(Product product) {
+    public static String formatWithContext(Product product, List<RecordEntry> recordEntries) {
+        String additionalContext = recordEntries.stream()
+                .map(entry -> String.format(
+                        "Product Name: %s\nText: %s\n",
+                        entry.getDocTitle(),
+                        entry.getText()))
+                .collect(Collectors.joining("\n"));
         return String.format(template,
                 product.getName(),
                 String.join(",", product.getTags()),
                 product.getShortDescription(),
-                product.getDescription());
+                product.getDescription(),
+                additionalContext);
     }
 }
