@@ -166,7 +166,8 @@ function aiChatToggleOpen() {
   localStorage.chatToggleClosed = false;
 }
 
-$(document).ready(function () {
+function init() {
+  $('body').append($('<script />', { src: 'https://cdn.jsdelivr.net/npm/marked/marked.min.js' }));
   $('#aiChatInputboxSendButton').click(sendMessage);
   $('#aiChatInputbox').keypress(function (e) {
     if (e.which == 13) {
@@ -181,4 +182,6 @@ $(document).ready(function () {
   $('body').delegate('#aiChatAskBtn', 'click', aiChatToggleOpen);
   
   initConversation();
-});
+}
+
+init();
