@@ -45,8 +45,16 @@ public class ChatService {
             return chat(messages);
         }
 
-        // step 2. Populate the prompt template with the product details.
-        var prompt = ProductDetailPromptTemplate.formatWithContext(product);
+        // step 2. Convert the user's query text to an embedding
+        String question = messages.get(messages.size() - 1).getContent();
+        var response = client.getEmbeddings(List.of(question));
+        var embedding = response.getData().get(0).getEmbedding();
+
+        // step 3. Query Top-K nearest text chunks from the vector store
+        var candidateRecords = store.searchTopKNearest(embedding, 5, 0.4);
+
+        // step 4. Populate the prompt template with the product details.
+        var prompt = ProductDetailPromptTemplate.formatWithContext(product, candidateRecords);
         var processedMessages = new ArrayList<ChatMessage>();
         processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
 
@@ -56,7 +64,7 @@ public class ChatService {
         }
         processedMessages.addAll(list);
 
-        // step 3. Call to OpenAI chat completion API
+        // step 5. Call to OpenAI chat completion API
         var answer = client.getChatCompletions(processedMessages);
         List<String> ret = new ArrayList<>();
         for (ChatChoice choice : answer.getChoices()) {
@@ -78,8 +86,7 @@ public class ChatService {
 
         validateMessage(messages);
 
-        var lastUserMessage = messages.get(messages.size() - 1);
-        String question = lastUserMessage.getContent();
+        String question = messages.get(messages.size() - 1).getContent();
 
         // step 1. Convert the user's query text to an embedding
         var response = client.getEmbeddings(List.of(question));
@@ -89,7 +96,7 @@ public class ChatService {
         var candidateRecords = store.searchTopKNearest(embedding, 5, 0.4);
 
         // step 3. Populate the prompt template with the chunks
-        var prompt = HomepagePromptTemplate.formatWithContext(candidateRecords, question);
+        var prompt = HomepagePromptTemplate.formatWithContext(candidateRecords);
         var processedMessages = new ArrayList<ChatMessage>();
         processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
         List<ChatMessage> list = new ArrayList<>();

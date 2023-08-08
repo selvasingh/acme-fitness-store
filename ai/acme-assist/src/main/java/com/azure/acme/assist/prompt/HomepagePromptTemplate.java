@@ -15,13 +15,13 @@ public class HomepagePromptTemplate {
             %s
             """;
 
-    public static String formatWithContext(List<RecordEntry> recordEntries, String question) {
+    public static String formatWithContext(List<RecordEntry> recordEntries) {
         String merged = recordEntries.stream()
                 .map(entry -> String.format(
                         "Product Name: %s\nText: %s\n",
                         entry.getDocTitle(),
                         entry.getText()))
                 .collect(Collectors.joining("\n"));
-        return String.format(template, merged, question);
+        return String.format(template, merged);
     }
 }
