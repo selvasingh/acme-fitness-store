@@ -1,6 +1,6 @@
 <div class="container"><a href="index.html" class="navbar-brand home"><img src="img/logo.png" alt="ACME Fitness logo"
-                                                                           class="d-none d-md-inline-block"><img
-        src="img/logo-small.png" alt="ACME Fitness logo" class="d-md-none"><span class="sr-only">ACME Fitness - go to homepage</span></a>
+            class="d-none d-md-inline-block"><img src="img/logo-small.png" alt="ACME Fitness logo"
+            class="d-md-none"><span class="sr-only">ACME Fitness - go to homepage</span></a>
     <div class="currency-area .d-sm-none .d-md-block">
         <select id="currency" class="form-control btn-outline-secondary mr-1">
             <option value="USD" selected="USD">USD</option>
@@ -15,18 +15,17 @@
         <a href="cart.html" class="btn btn-outline-primary mr-1"><i class="fa fa-shopping-cart"></i><span
                 id="totalItems" class="d-none d-sm-inline"></span></a>
         <button type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation"
-                aria-expanded="false" aria-label="Toggle navigation" class="btn btn-outline-primary"><i
+            aria-expanded="false" aria-label="Toggle navigation" class="btn btn-outline-primary"><i
                 class="fa fa-align-justify"></i><span class="sr-only">Toggle navigation</span></button>
 
     </div>
     <div id="navigation" class="navbar-collapse collapse">
         <div class="navbar-nav mr-auto">
             <div class="nav-item active dropdown normal-dropdown"><a id="homeDropdown" href="index.html"
-                                                                     aria-haspopup="true" aria-expanded="false"
-                                                                     class="nav-link">Home</a>
+                    aria-haspopup="true" aria-expanded="false" class="nav-link">Home</a>
             </div>
             <div class="nav-item dropdown yamm-fw"><a href="catalog.html" id="catalog" class="nav-link">Catalog<b
-                    class="caret"></b></a>
+                        class="caret"></b></a>
             </div>
 
             <div class="nav-item"><a href="contact.html" class="nav-link">Contact</a></div>
@@ -36,12 +35,37 @@
                 <span class="sr-only">User login</span><i class="fa fa-users"></i></button>
             <!--<button class="btn btn-outline-secondary search mr-1"><span class="sr-only">Toggle search</span><i class="fa fa-search">  </i></button>-->
             <a href="cart.html" class="btn btn-outline-primary"><i class="fa fa-shopping-cart"></i><span
-                    id="totalItemsMd" class="hidden-sm">0 items <span class="hidden-md">in cart   </span></span></a>
-            <button type="button" class="btn btn-primary" id="aiChatAskBtn"><i class="fa fa-lightbulb-o"></i>Ask to FitAssist</button>
+                    id="totalItemsMd" class="hidden-sm">0 items <span class="hidden-md">in cart </span></span></a>
+            <button type="button" class="btn btn-primary" id="aiChatAskBtn"><i class="fa fa-lightbulb-o"></i>Ask to
+                FitAssist</button>
         </div>
     </div>
     <!-- /.nav-collapse-->
 </div>
+<!-- *** AI CHAT ***-->
+<div id="aiChat">
+    <div id="aiChatTitle"><i class="fa fa-lightbulb-o"></i>FitAssist
+        <input type="checkbox" id="aiChatToggle" checked>
+        <button id="aiChatTitleClearButton"><i class="fa fa-undo" aria-hidden="true"></i></button>
+        <label for="aiChatToggle" id="aiChatTitleCloseArea"><i class="fa fa-times"></i></label>
+        <label for="aiChatToggle" id="aiChatTitleOpenArea"></label>
+    </div>
+    <div id="aiChatContainer">
+        <div id="aiChatHistory"></div>
+        <div id="aiChatInputboxOuter">
+            <div id="aiChatInputboxBuiltInQuestions" style="display: none;"></div>
+            <div id="aiChatInputboxTyping">FitAssist is typing...</div>
+            <div id="aiChatInputboxInner">
+                <textarea id="aiChatInputbox" placeholder="Ask anything about our bikes..."></textarea>
+                <button id="aiChatInputboxSendButton"><i class="fa fa-paper-plane-o"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#aiChat-->
+<!-- *** AI CHAT END ***-->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="js/openai.js"></script>
 <script src="js/client.js"></script>
 <script src="js/jwt-decode.min.js"></script>
 <script>
