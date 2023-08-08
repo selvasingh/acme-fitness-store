@@ -164,6 +164,7 @@ function changeChatToggle() {
 function aiChatToggleOpen() {
   $('#aiChatToggle').prop('checked', false);
   localStorage.chatToggleClosed = false;
+  $('#aiChatHistory').scrollTop($('#aiChatHistory').prop('scrollHeight'));
 }
 
 function init() {
