@@ -37,17 +37,15 @@
       --deployment-name text-embedding-ada-002 \
       --model-name text-embedding-ada-002 \
       --model-version "2"  \
-      --model-format OpenAI \
-      --scale-settings-scale-type "Standard"
+      --model-format OpenAI
 
     az cognitiveservices account deployment create \
       -g ${RESOURCE_GROUP} \
       -n ${OPENAI_RESOURCE_NAME} \
-      --deployment-name gpt-35-turbo \
-      --model-name gpt-35-turbo \
-      --model-version "0301"  \
-      --model-format OpenAI \
-      --scale-settings-scale-type "Standard"     
+      --deployment-name gpt-35-turbo-16k \
+      --model-name gpt-35-turbo-16k \
+      --model-version "0613"  \
+      --model-format OpenAI
    ```
 
 
