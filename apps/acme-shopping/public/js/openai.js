@@ -181,7 +181,7 @@ function init() {
   $('#aiChatToggle').prop('checked', localStorage.chatToggleClosed !== 'false');
   $('body').delegate('#aiChatAskBtn', 'click', aiChatToggleOpen);
   
-  initConversation();
+  setTimeout(initConversation, 0);
 }
 
 init();
