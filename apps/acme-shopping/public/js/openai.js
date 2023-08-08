@@ -180,10 +180,13 @@ function init() {
   $('#aiChatToggle').prop('checked', localStorage.chatToggleClosed !== 'false');
   $('body').delegate('#aiChatAskBtn', 'click', aiChatToggleOpen);
   
-  let marked = document.createElement('script');
-  marked.onload = initConversation;
-  marked.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
-  $('body').append(marked);
+  let markedReadyWatcher;
+  markedReadyWatcher = setInterval(() => {
+    if (marked) {
+      clearInterval(markedReadyWatcher);
+      initConversation();
+    }
+  }, 100);
 }
 
 init();
