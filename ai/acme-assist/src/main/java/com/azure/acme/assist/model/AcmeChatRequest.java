@@ -7,7 +7,7 @@ import com.azure.ai.openai.models.ChatRole;
 import lombok.Data;
 
 @Data
-public class ChatRequest {
+public class AcmeChatRequest {
 
     /**
      * (Optional) Name of the request page. Used as the context for the conversation.

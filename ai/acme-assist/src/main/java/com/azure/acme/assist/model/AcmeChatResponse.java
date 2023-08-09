@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ChatResponse {
+public class AcmeChatResponse {
 
     /**
      * The candidate answers for the chat. Only one is provided for now.

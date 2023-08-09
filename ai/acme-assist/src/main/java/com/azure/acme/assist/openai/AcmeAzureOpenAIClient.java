@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
-public class AzureOpenAIClient {
+public class AcmeAzureOpenAIClient {
 
     private static final double TEMPERATURE = 0.7;
 
