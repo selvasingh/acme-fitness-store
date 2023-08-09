@@ -4,6 +4,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  flyway:
+    encoding: UTF-8
 eureka:
   client:
     enabled: false

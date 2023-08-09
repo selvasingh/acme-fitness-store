@@ -63,7 +63,7 @@ cd acme-assist
 
 1. Prepare the new sample data and images:
    ```bash
-   cd ai && ./prepare-data.sh
+   cd ai && ./prepare_data.sh
    cd ..
    ```.
 1. Redeploy `catalog-service` with the new resources:
