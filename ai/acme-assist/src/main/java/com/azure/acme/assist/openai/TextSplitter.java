@@ -1,12 +1,12 @@
 package com.azure.acme.assist.openai;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.EncodingType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Utility for splitting a text into chunks of a given token number.

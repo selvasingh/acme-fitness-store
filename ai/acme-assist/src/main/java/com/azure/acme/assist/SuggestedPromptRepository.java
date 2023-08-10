@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -13,46 +15,46 @@ import com.azure.acme.assist.model.SuggestedPrompts;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
 
 @Repository
-@Slf4j
 public class SuggestedPromptRepository {
 
-    @Autowired
-    private ApplicationContext context;
+	private static final Logger log = LoggerFactory.getLogger(SuggestedPromptRepository.class);
 
-    private Map<String, SuggestedPrompts> promptsMap = new HashMap<>();
+	@Autowired
+	private ApplicationContext context;
 
-    private SuggestedPrompts defaultPrompts;
+	private Map<String, SuggestedPrompts> promptsMap = new HashMap<>();
 
-    @PostConstruct
-    private void loadSuggestedPrompts() {
-        Resource resource = context.getResource("classpath:com/azure/acme/assist/suggested-prompts.json");
-        List<SuggestedPrompts> list = null;
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            list = mapper.readValue(resource.getInputStream(),
-                    mapper.getTypeFactory().constructCollectionType(List.class, SuggestedPrompts.class));
-        } catch (Exception e) {
-            log.warn("Cannot load suggested-prompots.json", e);
-        }
+	private SuggestedPrompts defaultPrompts;
 
-        if (list != null && list.size() > 0) {
-            for (SuggestedPrompts item : list) {
-                promptsMap.put(item.getPage(), item);
-                if (item.isDefault()) {
-                    defaultPrompts = item;
-                }
-            }
-        }
-    }
+	@PostConstruct
+	private void loadSuggestedPrompts() {
+		Resource resource = context.getResource("classpath:com/azure/acme/assist/suggested-prompts.json");
+		List<SuggestedPrompts> list = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			list = mapper.readValue(resource.getInputStream(),
+					mapper.getTypeFactory().constructCollectionType(List.class, SuggestedPrompts.class));
+		} catch (Exception e) {
+			log.warn("Cannot load suggested-prompots.json", e);
+		}
 
-    public SuggestedPrompts getSuggestedPrompts(String page) {
-        return (page == null) ? null : promptsMap.get(page);
-    }
+		if (list != null && list.size() > 0) {
+			for (SuggestedPrompts item : list) {
+				promptsMap.put(item.getPage(), item);
+				if (item.isDefault()) {
+					defaultPrompts = item;
+				}
+			}
+		}
+	}
 
-    public SuggestedPrompts getDefaultSuggestedPrompts() {
-        return defaultPrompts;
-    }
+	public SuggestedPrompts getSuggestedPrompts(String page) {
+		return (page == null) ? null : promptsMap.get(page);
+	}
+
+	public SuggestedPrompts getDefaultSuggestedPrompts() {
+		return defaultPrompts;
+	}
 }

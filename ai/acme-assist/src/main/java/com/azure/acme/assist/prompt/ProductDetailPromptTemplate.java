@@ -1,10 +1,10 @@
 package com.azure.acme.assist.prompt;
 
-import com.azure.acme.assist.model.Product;
-import com.azure.acme.assist.openai.RecordEntry;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.azure.acme.assist.model.Product;
+import com.azure.acme.assist.openai.RecordEntry;
 
 public class ProductDetailPromptTemplate {
 

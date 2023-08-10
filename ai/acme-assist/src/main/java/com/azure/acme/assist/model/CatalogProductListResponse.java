@@ -2,15 +2,22 @@ package com.azure.acme.assist.model;
 
 import java.util.List;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.extern.jackson.Jacksonized;
-
-@Builder
-@Data
-@Jacksonized
 public class CatalogProductListResponse {
 
-    private final List<Product> data;
+	private List<Product> data;
+
+	/**
+	 * @return the data
+	 */
+	public List<Product> getData() {
+		return data;
+	}
+
+	/**
+	 * @param data the data to set
+	 */
+	public void setData(List<Product> data) {
+		this.data = data;
+	}
 
 }
