@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.azure.acme.assist.model.ChatRequest;
-import com.azure.acme.assist.model.ChatResponse;
+import com.azure.acme.assist.model.AcmeChatRequest;
+import com.azure.acme.assist.model.AcmeChatResponse;
 import com.azure.acme.assist.model.GreetingRequest;
 import com.azure.acme.assist.model.GreetingResponse;
 import com.azure.acme.assist.model.SuggestedPrompts;
@@ -29,9 +29,9 @@ public class FitAssistController {
     private SuggestedPromptService suggestedPromptService;
 
     @PostMapping("/question")
-    public ChatResponse chatCompletion(@RequestBody ChatRequest request) {
+    public AcmeChatResponse chatCompletion(@RequestBody AcmeChatRequest request) {
         List<String> ret = chatService.chat(request.getMessages(), request.getProductId());
-        ChatResponse response = new ChatResponse();
+        AcmeChatResponse response = new AcmeChatResponse();
         response.setMessages(ret);
         return response;
     }
