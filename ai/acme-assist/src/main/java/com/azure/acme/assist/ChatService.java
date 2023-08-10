@@ -1,27 +1,31 @@
 package com.azure.acme.assist;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.azure.acme.assist.model.AcmeChatRequest;
+import com.azure.acme.assist.model.Product;
+import com.azure.acme.assist.openai.AcmeAzureOpenAIClient;
+import com.azure.acme.assist.openai.VectorStore;
+import com.azure.acme.assist.prompt.HomepagePromptTemplate;
+import com.azure.acme.assist.prompt.ProductDetailMessageCreator;
+import com.azure.ai.openai.models.ChatChoice;
+import com.azure.ai.openai.models.ChatRole;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.ai.core.llm.LLMResult;
+import org.springframework.ai.core.llm.LlmClient;
+import org.springframework.ai.core.prompt.Generation;
+import org.springframework.ai.core.prompt.Prompt;
+import org.springframework.ai.core.prompt.messages.ChatMessage;
+import org.springframework.ai.core.prompt.messages.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.azure.acme.assist.model.ChatRequest;
-import com.azure.acme.assist.model.Product;
-import com.azure.acme.assist.openai.AzureOpenAIClient;
-import com.azure.acme.assist.openai.VectorStore;
-import com.azure.acme.assist.prompt.HomepagePromptTemplate;
-import com.azure.acme.assist.prompt.ProductDetailPromptTemplate;
-import com.azure.ai.openai.models.ChatChoice;
-import com.azure.ai.openai.models.ChatMessage;
-import com.azure.ai.openai.models.ChatRole;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChatService {
 
     @Autowired
-    private AzureOpenAIClient client;
+    private AcmeAzureOpenAIClient client;
 
     @Autowired
     private VectorStore store;
@@ -29,24 +33,33 @@ public class ChatService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private LlmClient llmClient;
+
+    @Autowired
+    private ProductDetailMessageCreator productDetailMessageCreator;
+
     /**
      * Chat with the OpenAI API. Use the product details as the context.
      *
-     * @param messages the chat messages
+     * @param chatRequestMessages the chat messages
      * @return the chat response
      */
-    public List<String> chat(List<ChatRequest.Message> messages, String productId) {
+    public List<String> chat(List<AcmeChatRequest.Message> chatRequestMessages, String productId) {
 
-        validateMessage(messages);
+        validateMessage(chatRequestMessages);
 
         // step 1. Retrieve the product details.
         Product product = productRepository.getProductById(productId);
+        // If no specific product is found, search the vector store to find something that matches the request.
         if (product == null) {
-            return chat(messages);
+            return chat(chatRequestMessages);
         }
 
+        List<Message> messages = new ArrayList<>();
+
         // step 2. Convert the user's query text to an embedding
-        String question = messages.get(messages.size() - 1).getContent();
+        String question = chatRequestMessages.get(chatRequestMessages.size() - 1).getContent();
         var response = client.getEmbeddings(List.of(question));
         var embedding = response.getData().get(0).getEmbedding();
 
@@ -54,23 +67,22 @@ public class ChatService {
         var candidateRecords = store.searchTopKNearest(embedding, 5, 0.4);
 
         // step 4. Populate the prompt template with the product details.
-        var prompt = ProductDetailPromptTemplate.formatWithContext(product, candidateRecords);
-        var processedMessages = new ArrayList<ChatMessage>();
-        processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
+        Message productDetailMessage =  productDetailMessageCreator.getMessage(product, candidateRecords);
+        messages.add(productDetailMessage);
 
-        List<ChatMessage> list = new ArrayList<>();
-        for (ChatRequest.Message line : messages) {
-            list.add(new ChatMessage(line.getRole(), line.getContent()));
+        // Convert to acme messages types to Spring AI message types
+        for (AcmeChatRequest.Message chatRequestMessage : chatRequestMessages) {
+            String roletoString = chatRequestMessage.getRole().toString().toUpperCase();
+            messages.add(new ChatMessage(roletoString, chatRequestMessage.getContent()));
         }
-        processedMessages.addAll(list);
 
         // step 5. Call to OpenAI chat completion API
-        var answer = client.getChatCompletions(processedMessages);
+        Prompt prompt = new Prompt(messages);
+        LLMResult result = this.llmClient.generate(prompt);
         List<String> ret = new ArrayList<>();
-        for (ChatChoice choice : answer.getChoices()) {
-            if (choice.getMessage() != null && choice.getMessage().getContent() != null) {
-                ret.add(filterMessage(choice.getMessage().getContent()));
-            }
+        List<Generation> generations = result.getGenerations().get(0);
+        for (Generation generation : generations) {
+            ret.add(filterMessage(generation.getText()));
         }
         return ret;
     }
@@ -82,7 +94,7 @@ public class ChatService {
      * @param messages the chat messages
      * @return the chat response
      */
-    public List<String> chat(List<ChatRequest.Message> messages) {
+    public List<String> chat(List<AcmeChatRequest.Message> messages) {
 
         validateMessage(messages);
 
@@ -97,11 +109,11 @@ public class ChatService {
 
         // step 3. Populate the prompt template with the chunks
         var prompt = HomepagePromptTemplate.formatWithContext(candidateRecords);
-        var processedMessages = new ArrayList<ChatMessage>();
-        processedMessages.add(new ChatMessage(ChatRole.SYSTEM, prompt));
-        List<ChatMessage> list = new ArrayList<>();
-        for (ChatRequest.Message line : messages) {
-            list.add(new ChatMessage(line.getRole(), line.getContent()));
+        var processedMessages = new ArrayList<com.azure.ai.openai.models.ChatMessage>();
+        processedMessages.add(new com.azure.ai.openai.models.ChatMessage(ChatRole.SYSTEM, prompt));
+        List<com.azure.ai.openai.models.ChatMessage> list = new ArrayList<>();
+        for (AcmeChatRequest.Message line : messages) {
+            list.add(new com.azure.ai.openai.models.ChatMessage(line.getRole(), line.getContent()));
         }
         processedMessages.addAll(list);
 
@@ -117,7 +129,7 @@ public class ChatService {
         return ret;
     }
 
-    private static void validateMessage(List<ChatRequest.Message> messages) {
+    private static void validateMessage(List<AcmeChatRequest.Message> messages) {
         if (messages == null || messages.isEmpty()) {
             throw new IllegalArgumentException("message shouldn't be empty.");
         }

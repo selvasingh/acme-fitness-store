@@ -12,7 +12,11 @@ import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.Embeddings;
 import com.azure.ai.openai.models.EmbeddingsOptions;
 
-public class AzureOpenAIClient {
+import java.util.List;
+
+@RequiredArgsConstructor
+@Slf4j
+public class AcmeAzureOpenAIClient {
 
 	private static final Logger log = LoggerFactory.getLogger(AzureOpenAIClient.class);
 
