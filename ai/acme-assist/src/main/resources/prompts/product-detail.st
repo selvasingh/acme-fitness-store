@@ -8,5 +8,6 @@ Short description:
 {shortDescription}
 Full description:
 {fullDescription}
+==================================
 Then try to improve your answer the following additional information:
 {additionalContext}
