@@ -9,97 +9,97 @@ import lombok.Data;
 @Data
 public class AcmeChatRequest {
 
-	/**
-	 * (Optional) Name of the request page. Used as the context for the
-	 * conversation.
-	 */
-	private String page;
+    /**
+     * (Optional) Name of the request page. Used as the context for the
+     * conversation.
+     */
+    private String page;
 
-	/**
-	 * (Optional) ID of the product. Used as the context for the conversation.
-	 */
-	private String productId;
+    /**
+     * (Optional) ID of the product. Used as the context for the conversation.
+     */
+    private String productId;
 
-	/**
-	 * The chat history of the conversation. The last message must be in the user
-	 * role.
-	 */
-	private List<Message> messages;
+    /**
+     * The chat history of the conversation. The last message must be in the user
+     * role.
+     */
+    private List<Message> messages;
 
-	/**
-	 * @return the page
-	 */
-	public String getPage() {
-		return page;
-	}
+    /**
+     * @return the page
+     */
+    public String getPage() {
+        return page;
+    }
 
-	/**
-	 * @param page the page to set
-	 */
-	public void setPage(String page) {
-		this.page = page;
-	}
+    /**
+     * @param page the page to set
+     */
+    public void setPage(String page) {
+        this.page = page;
+    }
 
-	/**
-	 * @return the productId
-	 */
-	public String getProductId() {
-		return productId;
-	}
+    /**
+     * @return the productId
+     */
+    public String getProductId() {
+        return productId;
+    }
 
-	/**
-	 * @param productId the productId to set
-	 */
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
+    /**
+     * @param productId the productId to set
+     */
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
 
-	/**
-	 * @return the messages
-	 */
-	public List<Message> getMessages() {
-		return messages;
-	}
+    /**
+     * @return the messages
+     */
+    public List<Message> getMessages() {
+        return messages;
+    }
 
-	/**
-	 * @param messages the messages to set
-	 */
-	public void setMessages(List<Message> messages) {
-		this.messages = messages;
-	}
+    /**
+     * @param messages the messages to set
+     */
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
 
-	public static class Message {
+    public static class Message {
 
-		private ChatRole role;
+        private ChatRole role;
 
-		private String content;
+        private String content;
 
-		/**
-		 * @return the role
-		 */
-		public ChatRole getRole() {
-			return role;
-		}
+        /**
+         * @return the role
+         */
+        public ChatRole getRole() {
+            return role;
+        }
 
-		/**
-		 * @param role the role to set
-		 */
-		public void setRole(ChatRole role) {
-			this.role = role;
-		}
+        /**
+         * @param role the role to set
+         */
+        public void setRole(ChatRole role) {
+            this.role = role;
+        }
 
-		/**
-		 * @return the content
-		 */
-		public String getContent() {
-			return content;
-		}
+        /**
+         * @return the content
+         */
+        public String getContent() {
+            return content;
+        }
 
-		/**
-		 * @param content the content to set
-		 */
-		public void setContent(String content) {
-			this.content = content;
-		}
-	}
+        /**
+         * @param content the content to set
+         */
+        public void setContent(String content) {
+            this.content = content;
+        }
+    }
 }
