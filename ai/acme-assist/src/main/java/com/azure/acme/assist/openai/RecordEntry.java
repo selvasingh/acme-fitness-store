@@ -3,96 +3,96 @@ package com.azure.acme.assist.openai;
 import java.util.List;
 
 public class RecordEntry {
-	private String id;
+    private String id;
 
-	private String docId;
+    private String docId;
 
-	private String docTitle;
+    private String docTitle;
 
-	private String text;
+    private String text;
 
-	private List<Double> embedding;
+    private List<Double> embedding;
 
-	public RecordEntry() {
-		
-	}
-	
-	public RecordEntry(String id, String docId, String docTitle, String text, List<Double> embedding) {
-		this.id = id;
-		this.docId = docId;
-		this.docTitle = docTitle;
-		this.text = text;
-		this.embedding = embedding;
-	}
+    public RecordEntry() {
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
+    }
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
+    public RecordEntry(String id, String docId, String docTitle, String text, List<Double> embedding) {
+        this.id = id;
+        this.docId = docId;
+        this.docTitle = docTitle;
+        this.text = text;
+        this.embedding = embedding;
+    }
 
-	/**
-	 * @return the docId
-	 */
-	public String getDocId() {
-		return docId;
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @param docId the docId to set
-	 */
-	public void setDocId(String docId) {
-		this.docId = docId;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the docTitle
-	 */
-	public String getDocTitle() {
-		return docTitle;
-	}
+    /**
+     * @return the docId
+     */
+    public String getDocId() {
+        return docId;
+    }
 
-	/**
-	 * @param docTitle the docTitle to set
-	 */
-	public void setDocTitle(String docTitle) {
-		this.docTitle = docTitle;
-	}
+    /**
+     * @param docId the docId to set
+     */
+    public void setDocId(String docId) {
+        this.docId = docId;
+    }
 
-	/**
-	 * @return the text
-	 */
-	public String getText() {
-		return text;
-	}
+    /**
+     * @return the docTitle
+     */
+    public String getDocTitle() {
+        return docTitle;
+    }
 
-	/**
-	 * @param text the text to set
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
+    /**
+     * @param docTitle the docTitle to set
+     */
+    public void setDocTitle(String docTitle) {
+        this.docTitle = docTitle;
+    }
 
-	/**
-	 * @return the embedding
-	 */
-	public List<Double> getEmbedding() {
-		return embedding;
-	}
+    /**
+     * @return the text
+     */
+    public String getText() {
+        return text;
+    }
 
-	/**
-	 * @param embedding the embedding to set
-	 */
-	public void setEmbedding(List<Double> embedding) {
-		this.embedding = embedding;
-	}
+    /**
+     * @param text the text to set
+     */
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     * @return the embedding
+     */
+    public List<Double> getEmbedding() {
+        return embedding;
+    }
+
+    /**
+     * @param embedding the embedding to set
+     */
+    public void setEmbedding(List<Double> embedding) {
+        this.embedding = embedding;
+    }
 
 }

@@ -9,8 +9,8 @@ import com.knuddels.jtokkit.api.EncodingRegistry;
 import com.knuddels.jtokkit.api.EncodingType;
 
 /**
- * Utility for splitting a text into chunks of a given token number.
- * The token is calculated using the CL100K encoding from gpt-3.5 & gpt-4.
+ * Utility for splitting a text into chunks of a given token number. The token
+ * is calculated using the CL100K encoding from gpt-3.5 & gpt-4.
  */
 public class TextSplitter {
     private static final int DEFAULT_CHUNK_SIZE = 800; // The target size of each text chunk in tokens
