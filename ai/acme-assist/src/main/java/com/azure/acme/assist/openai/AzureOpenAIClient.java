@@ -1,48 +1,51 @@
 package com.azure.acme.assist.openai;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.models.ChatCompletions;
 import com.azure.ai.openai.models.ChatCompletionsOptions;
 import com.azure.ai.openai.models.ChatMessage;
 import com.azure.ai.openai.models.Embeddings;
 import com.azure.ai.openai.models.EmbeddingsOptions;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
-@RequiredArgsConstructor
-@Slf4j
 public class AzureOpenAIClient {
 
-    private static final double TEMPERATURE = 0.7;
+	private static final Logger log = LoggerFactory.getLogger(AzureOpenAIClient.class);
 
-    private final OpenAIClient client;
+	private static final double TEMPERATURE = 0.7;
 
-    private final String embeddingDeploymentId;
+	public AzureOpenAIClient(OpenAIClient client, String embeddingDeploymentId, String chatDeploymentId) {
+		this.client = client;
+		this.embeddingDeploymentId = embeddingDeploymentId;
+		this.chatDeploymentId = chatDeploymentId;
+	}
 
-    private final String chatDeploymentId;
+	private final OpenAIClient client;
 
-    public Embeddings getEmbeddings(List<String> texts) {
-        long startTime = System.currentTimeMillis();
-        var response = client.getEmbeddings(embeddingDeploymentId,
-                new EmbeddingsOptions(texts));
-        long endTime = System.currentTimeMillis();
-        log.info("Finished an embedding call with {} tokens in {} milliseconds.",
-                response.getUsage().getTotalTokens(),
-                endTime - startTime);
-        return response;
-    }
+	private final String embeddingDeploymentId;
 
-    public ChatCompletions getChatCompletions(List<ChatMessage> messages) {
-        long startTime = System.currentTimeMillis();
-        var chatCompletionsOptions = new ChatCompletionsOptions(messages)
-                .setTemperature(TEMPERATURE);
-        var response = client.getChatCompletions(chatDeploymentId, chatCompletionsOptions);
-        long endTime = System.currentTimeMillis();
-        log.info("Finished a chat completion call with {} tokens in {} milliseconds.",
-                response.getUsage().getTotalTokens(),
-                endTime - startTime);
-        return response;
-    }
+	private final String chatDeploymentId;
+
+	public Embeddings getEmbeddings(List<String> texts) {
+		long startTime = System.currentTimeMillis();
+		var response = client.getEmbeddings(embeddingDeploymentId, new EmbeddingsOptions(texts));
+		long endTime = System.currentTimeMillis();
+		log.info("Finished an embedding call with {} tokens in {} milliseconds.", response.getUsage().getTotalTokens(),
+				endTime - startTime);
+		return response;
+	}
+
+	public ChatCompletions getChatCompletions(List<ChatMessage> messages) {
+		long startTime = System.currentTimeMillis();
+		var chatCompletionsOptions = new ChatCompletionsOptions(messages).setTemperature(TEMPERATURE);
+		var response = client.getChatCompletions(chatDeploymentId, chatCompletionsOptions);
+		long endTime = System.currentTimeMillis();
+		log.info("Finished a chat completion call with {} tokens in {} milliseconds.",
+				response.getUsage().getTotalTokens(), endTime - startTime);
+		return response;
+	}
 }

@@ -1,15 +1,37 @@
 package com.azure.acme.assist.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.extern.jackson.Jacksonized;
-
-@Builder
-@Data
-@Jacksonized
 public class CatalogProductResponse {
 
-    private final Product data;
+	private Product data;
 
-    private final int status;
+	private int status;
+
+	/**
+	 * @return the data
+	 */
+	public Product getData() {
+		return data;
+	}
+
+	/**
+	 * @param data the data to set
+	 */
+	public void setData(Product data) {
+		this.data = data;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public int getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 }
