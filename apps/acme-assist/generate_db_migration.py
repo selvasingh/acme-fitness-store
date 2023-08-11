@@ -8,7 +8,7 @@ def single_quote(raw):
     return "'" + raw.replace("'", "''") + "'"
 
 def generate_sql(category):
-    data=json.load(open('data/' + category + '.json','r+'))
+    data=json.load(open(category,'r+'))
 
     sql = 'INSERT INTO CATALOG (id,  description,  image_url1,  image_url2,  image_url3,  name,  price,  short_description,  tags)\nVALUES'
 
@@ -34,5 +34,5 @@ def generate_sql(category):
     print(sql)
 
 if __name__ == '__main__':
-    generate_sql('bikes')
-    generate_sql('accessories')
+    generate_sql('data/bikes.json')
+    generate_sql('data/accessories.json')

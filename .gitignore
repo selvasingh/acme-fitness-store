@@ -9,6 +9,7 @@ azure-spring-apps-enterprise/scripts/setup-env-variables.sh
 azure-spring-apps-enterprise/scripts/setup-db-env-variables.sh
 azure-spring-apps-enterprise/scripts/setup-sso-variables.sh
 azure-spring-apps-enterprise/scripts/setup-env-variables-keyvault.sh
+azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh
 redis.json
 ad.json
 sso.json
