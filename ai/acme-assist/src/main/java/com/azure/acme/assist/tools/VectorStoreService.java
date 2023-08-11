@@ -20,7 +20,6 @@ import com.azure.acme.assist.openai.AcmeAzureOpenAIClient;
 import com.azure.acme.assist.openai.RecordEntry;
 import com.azure.acme.assist.openai.SimpleMemoryVectorStore;
 import com.azure.acme.assist.openai.TextSplitter;
-import com.azure.acme.assist.openai.VectorStore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,9 +30,6 @@ public class VectorStoreService {
 
     @Autowired
     private AcmeAzureOpenAIClient client;
-
-    @Autowired
-    private VectorStore vectorStore;
 
     public void buildFromJson(List<String> files, String saveToPath, List<String> pages, String format)
             throws IOException {
@@ -46,6 +42,7 @@ public class VectorStoreService {
 
         var objectMapper = new ObjectMapper();
         var splitter = new TextSplitter();
+        var vectorStore = new SimpleMemoryVectorStore();
         for (var file : files) {
             List<Product> products = null;
             if (format == null || "json".equals(format)) {
@@ -90,7 +87,7 @@ public class VectorStoreService {
                 }
             }
         }
-        ((SimpleMemoryVectorStore) vectorStore).saveToJsonFile(new File(saveToPath));
+        vectorStore.saveToJsonFile(new File(saveToPath));
 
         log.info("All documents are loaded to the local vector store. The index file saved to: {}", saveToPath);
     }
