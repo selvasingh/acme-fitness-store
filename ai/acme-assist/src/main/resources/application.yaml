@@ -1,0 +1,10 @@
+spring:
+  ai:
+    azure:
+      openai:
+        model: gpt-35-turbo-16k
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info,health
