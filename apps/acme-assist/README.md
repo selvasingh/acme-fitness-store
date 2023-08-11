@@ -9,8 +9,9 @@
 
 
 ## Prepare the Environment Variables
+1. Please navigate to the root folder of this project.
 1. Run `cp azure/setup-env-variables-template.sh azure/setup-env-variables.sh` and update the values in `setup-env-variables.sh` with your own values.
-1. Run `cp ai/setup-ai-env-variables-template.sh ai/setup-ai-env-variables.sh` and update the values in `setup-ai-env-variables.sh` with your own values.
+1. Run `cp azure/setup-ai-env-variables-template.sh azure/setup-ai-env-variables.sh` and update the values in `setup-ai-env-variables.sh` with your own values.
 
 
 ## Prepare Azure OpenAI Service
@@ -29,7 +30,7 @@
       --custom-domain ${OPENAI_RESOURCE_NAME}   
    ```
 
-1. Create the model deployments for `text-embedding-ada-002` and `gpt-35-turbo` in your Azure OpenAI service.
+1. Create the model deployments for `text-embedding-ada-002` and `gpt-35-turbo-16k` in your Azure OpenAI service.
    ```bash
    az cognitiveservices account deployment create \
       -g ${RESOURCE_GROUP} \
@@ -53,9 +54,9 @@
 
 Before building the `assist-service` service, we need to preprocess the data into the vector store. The vector store is a file that contains the vector representation of each product description. There's already a pre-built file `vector_store.json` in the repo so you can skip this step. If you want to build the vector store yourself, please run the following commands:
 ```bash
-cd ai && source ./setup-ai-env-variables.sh
-cd acme-assist
-./preprocess.sh ../data/bikes.json,../data/accessories.json src/main/resources/vector_store.json
+source ./azure/setup-ai-env-variables.sh
+cd apps\acme-assist
+./preprocess.sh data/bikes.json,data/accessories.json src/main/resources/vector_store.json
 ```
 
 
@@ -63,8 +64,7 @@ cd acme-assist
 
 1. Prepare the new sample data and images:
    ```bash
-   cd ai && ./prepare_data.sh
-   cd ..
+   ./apps/acme-assist/prepare_data.sh
    ```.
 1. Redeploy `catalog-service` with the new resources:
     ```bash
@@ -76,15 +76,14 @@ cd acme-assist
     ```
 1. Deploy the new ai service `assist-service` :
     ```bash
-    cd ai
-    source ./setup-ai-env-variables.sh
+    source ./azure/setup-ai-env-variables.sh
     az spring app create --name ${AI_APP} --instance-count 1 --memory 1Gi
     az spring gateway route-config create \
         --name ${AI_APP} \
         --app-name ${AI_APP} \
-        --routes-file assist-service.json
+        --routes-file azure/routes/assist-service.json
     az spring app deploy --name ${AI_APP} \
-        --source-path acme-assist \
+        --source-path apps/acme-assist \
         --build-env BP_JVM_VERSION=17 \
         --env AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT} AZURE_OPENAI_APIKEY=${AZURE_OPENAI_APIKEY} AZURE_OPENAI_CHATDEPLOYMENTID=${AZURE_OPENAI_CHATDEPLOYMENTID} AZURE_OPENAI_EMBEDDINGDEPLOYMENTID=${AZURE_OPENAI_EMBEDDINGDEPLOYMENTID}
     ```
