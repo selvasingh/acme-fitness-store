@@ -98,7 +98,8 @@
                     <div class="sizes">
                       <h3>Available Now</h3>
                     </div>
-                    <p id="productPrice" class="price"></p>
+                    <p id="productPrice" hidden></p>
+                    <p id="productDispPrice" class="price"></p>
                     <p class="text-center">
                       <button id="addToCart" type="submit" class="btn btn-primary"><i class="fa fa-shopping-cart"></i>
                         Add to cart</button>
@@ -179,7 +180,8 @@
             $("#productName").html(body.data.name)
             $("#productTitle").html(body.data.name)
             $("#descriptionTitle").html(body.data.shortDescription)
-            $("#productPrice").html(dollarUSLocale.format(body.data.price))
+            $("#productPrice").html(body.data.price)
+            $("#productDispPrice").html(dollarUSLocale.format(body.data.price))
             $("#detailedDescription").html(marked.parse(body.data.description))
             var img = '<img src="' + body.data.imageUrl2 + '" alt="" class="img-fluid">'
             $("#mainImage").html(img);
