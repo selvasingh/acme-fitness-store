@@ -9,9 +9,9 @@
 
 
 ## Prepare the Environment Variables
-1. Please navigate to the root folder of this project.
-1. Run `cp azure/setup-env-variables-template.sh azure/setup-env-variables.sh` and update the values in `setup-env-variables.sh` with your own values.
-1. Run `cp azure/setup-ai-env-variables-template.sh azure/setup-ai-env-variables.sh` and update the values in `setup-ai-env-variables.sh` with your own values.
+1. Please navigate to the root folder of this cloned repository.
+1. Run `cp azure-spring-apps-enterprise/scripts/setup-env-variables-template.sh azure-spring-apps-enterprise/scripts/setup-env-variables.sh` and update the values in `setup-env-variables.sh` with your own values.
+1. Run `cp azure-spring-apps-enterprise/scripts/setup-ai-env-variables-template.sh azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh` and update the values in `setup-ai-env-variables.sh` with your own values.
 
 
 ## Prepare Azure OpenAI Service
@@ -19,7 +19,7 @@
 1. Run the following command to create an Azure OpenAI resource in the the resource group.
 
    ```bash
-   source ./azure/setup-env-variables.sh
+   source ./azure-spring-apps-enterprise/scripts/setup-env-variables.sh
    export OPENAI_RESOURCE_NAME=<choose-a-resource-name>
    az cognitiveservices account create \
       -n ${OPENAI_RESOURCE_NAME} \
@@ -54,8 +54,8 @@
 
 Before building the `assist-service` service, we need to preprocess the data into the vector store. The vector store is a file that contains the vector representation of each product description. There's already a pre-built file `vector_store.json` in the repo so you can skip this step. If you want to build the vector store yourself, please run the following commands:
 ```bash
-source ./azure/setup-ai-env-variables.sh
-cd apps\acme-assist
+source ./azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh
+cd apps/acme-assist
 ./preprocess.sh data/bikes.json,data/accessories.json src/main/resources/vector_store.json
 ```
 
@@ -68,7 +68,7 @@ cd apps\acme-assist
    ```.
 1. Redeploy `catalog-service` with the new resources:
     ```bash
-    source ./azure/setup-env-variables.sh
+    source ./azure-spring-apps-enterprise/scripts/setup-env-variables.sh
     az spring app deploy --name ${CATALOG_SERVICE_APP} \
     --config-file-pattern catalog/default \
     --source-path apps/acme-catalog \
@@ -76,12 +76,12 @@ cd apps\acme-assist
     ```
 1. Deploy the new ai service `assist-service` :
     ```bash
-    source ./azure/setup-ai-env-variables.sh
+    source ./azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh
     az spring app create --name ${AI_APP} --instance-count 1 --memory 1Gi
     az spring gateway route-config create \
         --name ${AI_APP} \
         --app-name ${AI_APP} \
-        --routes-file azure/routes/assist-service.json
+        --routes-file azure-spring-apps-enterprise/resources/json/routes/assist-service.json
     az spring app deploy --name ${AI_APP} \
         --source-path apps/acme-assist \
         --build-env BP_JVM_VERSION=17 \

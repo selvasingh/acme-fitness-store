@@ -4,9 +4,6 @@ import java.util.List;
 
 import com.azure.ai.openai.models.ChatRole;
 
-import lombok.Data;
-
-@Data
 public class AcmeChatRequest {
 
     /**
