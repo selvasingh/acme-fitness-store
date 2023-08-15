@@ -354,7 +354,7 @@ function create_frontend_app() {
 }
 
 function deploy_cart_service() {
-  echo "Deploying cart-service app..."
+  echo "Deploying cart-service-app..."
   local redis_conn_str=$(az spring connection show -g $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
     --deployment default \
@@ -370,7 +370,7 @@ function deploy_cart_service() {
 }
 
 function deploy_identity_service() {
-  echo "Deploying identity-service app..."
+  echo "Deploying identity-service-app..."
   source "$PROJECT_ROOT/scripts/setup-sso-variables-ad.sh"
   az spring app deploy --name $IDENTITY_SERVICE \
     --env "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=${JWK_SET_URI}" \
@@ -380,7 +380,7 @@ function deploy_identity_service() {
 }
 
 function deploy_order_service() {
-  echo "Deploying user-service app..."
+  echo "Deploying order-service-app..."
   
   local gateway_url=$(az spring gateway show | jq -r '.properties.url')
   local postgres_connection_url=$(az spring connection show -g $RESOURCE_GROUP \
@@ -397,13 +397,13 @@ function deploy_order_service() {
 }
 
 function deploy_catalog_service() {
-  echo "Building catalog-service app..."
+  echo "Building catalog-service-app..."
   CURRENT_DIR=$(pwd)
   cd "$APPS_ROOT/acme-catalog"
   $APPS_ROOT/acme-catalog/gradlew clean build
   cd $CURRENT_DIR
 
-  echo "Deploying catalog-service app..."
+  echo "Deploying catalog-service-app..."
   az spring app deploy --name $CATALOG_SERVICE \
     --config-file-pattern catalog \
     --jvm-options='-XX:MaxMetaspaceSize=148644K' \
@@ -412,7 +412,7 @@ function deploy_catalog_service() {
 }
 
 function deploy_payment_service() {
-  echo "Deploying payment-service app..."
+  echo "Deploying payment-service-app..."
 
   az spring app deploy --name $PAYMENT_SERVICE \
     --config-file-pattern payment \
@@ -421,7 +421,7 @@ function deploy_payment_service() {
 }
 
 function deploy_frontend_app() {
-  echo "Deploying frontend app..."
+  echo "Deploying frontend-app..."
   local app_insights_key=$(az spring build-service builder buildpack-binding show -n default | jq -r '.properties.launchProperties.properties."connection-string"')
 
   rm -rf "$APPS_ROOT/acme-shopping/node_modules"
