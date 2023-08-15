@@ -248,7 +248,7 @@ function configure_acs() {
 }
 
 function create_cart_service() {
-  echo "Creating cart-service app..."
+  echo "Creating cart-service-app..."
   az spring app create --name $CART_SERVICE
   
   echo "Configuring cart-service app gateway..."
@@ -260,7 +260,7 @@ function create_cart_service() {
                           
   az extension add --name serviceconnector-passwordless --upgrade
   
-  echo "Configuring cart-service app redis..."
+  echo "Configuring cart-service-app redis..."
   az spring connection create redis \
     --service $SPRING_APPS_SERVICE \
     --deployment default \
@@ -276,24 +276,24 @@ function create_cart_service() {
 }
 
 function create_identity_service() {
-  echo "Creating identity service app..."
+  echo "Creating identity-service-app..."
   az spring app create --name $IDENTITY_SERVICE
   
-  echo "Creating identity service app ACS..."
+  echo "Creating identity-service-app ACS..."
   az spring application-configuration-service bind --app $IDENTITY_SERVICE
   
-  echo "Creating identity service app gateway..."
+  echo "Creating identity-service-app gateway..."
   az spring gateway route-config create --name $IDENTITY_SERVICE --app-name $IDENTITY_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/identity-service.json"
 }
 
 function create_order_service() {
-  echo "Creating order service app..."
+  echo "Creating order-service-app..."
   az spring app create --name $ORDER_SERVICE
   
-  echo "Creating order service app gateway..."
+  echo "Creating order-service-app-gateway..."
   az spring gateway route-config create --name $ORDER_SERVICE --app-name $ORDER_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/order-service.json"
 
-  echo "Creating order service app postres..."
+  echo "Creating order-service-app-postres..."
   az spring connection create postgres-flexible \
     --resource-group $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
@@ -308,19 +308,19 @@ function create_order_service() {
 }
 
 function create_catalog_service() {
-  echo "Creating catalog service app..."
+  echo "Creating catalog-service-app..."
   az spring app create --name $CATALOG_SERVICE
   
-  echo "Creating catalog service app ACS..."
+  echo "Creating catalog-service-app acs..."
   az spring application-configuration-service bind --app $CATALOG_SERVICE
   
-  echo "Creating catalog service app ServiceRegistryBind..."
+  echo "Creating catalog-service-app ServiceRegistryBind..."
   az spring service-registry bind --app $CATALOG_SERVICE
   
-  echo "Creating catalog service app gateway..."  
+  echo "Creating catalog-service-app gateway..."  
   az spring gateway route-config create --name $CATALOG_SERVICE --app-name $CATALOG_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/catalog-service.json"
 
-  echo "Creating catalog service app postgres..."  
+  echo "Creating catalog-service-app postgres..."  
   az spring connection create postgres-flexible \
     --resource-group $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
@@ -335,21 +335,21 @@ function create_catalog_service() {
 }
 
 function create_payment_service() {
-  echo "Creating payment service app..."
+  echo "Creating payment-service-app..."
   az spring app create --name $PAYMENT_SERVICE
   
-  echo "Creating payment service app ACS..."  
+  echo "Creating payment-service-app acs..."  
   az spring application-configuration-service bind --app $PAYMENT_SERVICE
   
-  echo "Creating payment service app ServiceRegistryBind..."  
+  echo "Creating payment-service-app ServiceRegistryBind..."  
   az spring service-registry bind --app $PAYMENT_SERVICE
 }
 
 function create_frontend_app() {
-  echo "Creating frontend app..."
+  echo "Creating frontend-app..."
   az spring app create --name $FRONTEND_APP
   
-  echo "Creating frontend app gateway..."  
+  echo "Creating frontend-app gateway..."  
   az spring gateway route-config create --name $FRONTEND_APP --app-name $FRONTEND_APP --routes-file "$PROJECT_ROOT/resources/json/routes/frontend.json"
 }
 
