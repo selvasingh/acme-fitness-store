@@ -43,9 +43,9 @@ function check_args() {
 function set_defaults() {
 
 	readonly PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
-	readonly APPS_ROOT="${PROJECT_ROOT}/apps"
+	readonly APPS_ROOT="${PROJECT_ROOT}/../apps"
 	
-	SUFFIX='-pr'
+	#SUFFIX='-pr'
 	
 	if [ -z $SUFFIX ]; then 
 	  SUFFIX=$(openssl rand -hex 3) 
@@ -112,12 +112,15 @@ function display_setup(){
   echo "  ResourceGroup: $RESOURCE_GROUP" 
   echo "         Region: $REGION" 
   echo "" 
-  echo "    ProjectRoot: $PROJECT_ROOT" 
+  echo "    ProjectRoot: $PROJECT_ROOT"
+  echo "       AppsRoot: $APPS_ROOT"
+  echo "  CurrentFolder: $(pwd)"
   echo ""   
 
 }
 
 function create_spring_cloud() {
+	echo "Creating Spring Cloud..."
   az group create --name ${RESOURCE_GROUP} \
     --location ${REGION}
 
@@ -136,15 +139,20 @@ function create_spring_cloud() {
 }
 
 function configure_defaults() {
-  echo "Configure azure defaults resource group: $RESOURCE_GROUP and spring $SPRING_APPS_SERVICE"
-  az configure --defaults group=$RESOURCE_GROUP spring=$SPRING_APPS_SERVICE location=${REGION}
+  echo "Configure azure defaults:"
+  echo "   ${SPRING_APPS_SERVICE}"
+  echo "   ${RESOURCE_GROUP}"
+  echo "   ${REGION}"
+ 
+  az configure --defaults spring=${SPRING_APPS_SERVICE} group=${RESOURCE_GROUP} location=${REGION}
+  
 }
 
 function create_dependencies() {
-  echo "Creating Azure Cache for Redis Instance $REDIS_NAME in location ${REGION}"
+  echo "Creating Azure Cache for Redis Instance $REDIS_NAME in location ${REGION}..."
   az redis create --location $REGION --name $REDIS_NAME --resource-group $RESOURCE_GROUP --sku Basic --vm-size c0
 
-  echo "Creating Azure Database for Postgres $ACMEFIT_POSTGRES_SERVER"
+  echo "Creating Azure Database for Postgres $ACMEFIT_POSTGRES_SERVER..."
   # create postgresql flexible server
   az postgres flexible-server create \
     --name $ACMEFIT_POSTGRES_SERVER \
@@ -156,23 +164,24 @@ function create_dependencies() {
     --tier Burstable \
     --sku-name Standard_B1ms \
     --version 14 \
-    --storage-size 32
+    --storage-size 32 \
+    --verbose
 
   # activate ad autentication
-  echo "Activating AD authentication on $ACMEFIT_POSTGRES_SERVER"
+  echo "Activating AD authentication on $ACMEFIT_POSTGRES_SERVER..."
   az postgres flexible-server parameter set \
     --server-name ${ACMEFIT_POSTGRES_SERVER} \
     --resource-group ${RESOURCE_GROUP} \
     --name azure.extensions \
     --value uuid-ossp
 
-  echo "Creating Postgres Database $ACMEFIT_CATALOG_DB_NAME"
+  echo "Creating Postgres Database $ACMEFIT_CATALOG_DB_NAME..."
   az postgres flexible-server db create \
     -g $RESOURCE_GROUP \
     -s $ACMEFIT_POSTGRES_SERVER \
     -d $ACMEFIT_CATALOG_DB_NAME
 
-  echo "Creating Postgres Database $ACMEFIT_ORDER_DB_NAME"
+  echo "Creating Postgres Database $ACMEFIT_ORDER_DB_NAME..."
   az postgres flexible-server db create \
     -g $RESOURCE_GROUP \
     -s $ACMEFIT_POSTGRES_SERVER \
@@ -180,27 +189,30 @@ function create_dependencies() {
 }
 
 function create_builder() {
-  echo "Creating a custom builder with name $CUSTOM_BUILDER and configuration $PROJECT_ROOT/resources/json/tbs/builder.json"
+  echo "Creating a custom builder with name $CUSTOM_BUILDER and configuration $PROJECT_ROOT/resources/json/tbs/builder.json..."
   az spring build-service builder create -n $CUSTOM_BUILDER --builder-file "$PROJECT_ROOT/resources/json/tbs/builder.json"
 }
 
 function configure_sso() {
-  echo "Configuring SSO"
-  az ad app create --display-name ${AZURE_AD_APP_NAME} >ad.json
-  export APPLICATION_ID=$(cat ad.json | jq -r '.appId')
+  echo "Configuring SSO..."
+  az ad app create --display-name ${AZURE_AD_APP_NAME} >${PROJECT_ROOT}/resources/json/ad.json
+  export APPLICATION_ID=$(cat ${PROJECT_ROOT}/resources/json/ad.json | jq -r '.appId')
 
-  az ad app credential reset --id ${APPLICATION_ID} --append >sso.json
+  echo "   AppID: $APPLICATION_ID"
+
+  az ad app credential reset --id ${APPLICATION_ID} --append >${PROJECT_ROOT}/resources/json/sso.json
   az ad sp create --id ${APPLICATION_ID}
 
   source "$PROJECT_ROOT/scripts/setup-sso-variables-ad.sh"
 }
 
 function configure_gateway() {
+	echo "Configuring Spring Cloud Gateway..."
   az spring gateway update --assign-endpoint true
   local gateway_url=$(az spring gateway show | jq -r '.properties.url')
 
   source "$PROJECT_ROOT/scripts/setup-sso-variables-ad.sh"
-  echo "Configuring Spring Cloud Gateway"
+  echo "Running Spring Cloud Gateway Update..."
   az spring gateway update \
     --api-description "ACME Fitness API" \
     --api-title "ACME Fitness" \
@@ -214,9 +226,10 @@ function configure_gateway() {
 }
 
 function update_sso_portalurl() {
+  echo "Updating SSO Portal URL..."
 	source "$PROJECT_ROOT/scripts/setup-sso-variables-ad.sh"
 
-  APPLICATION_ID=$(cat ad.json | jq -r '.appId')
+  APPLICATION_ID=$(cat ${PROJECT_ROOT}/resources/json/ad.json | jq -r '.appId')
   local gateway_url=$(az spring gateway show | jq -r '.properties.url')
   local portal_url=$(az spring api-portal show | jq -r '.properties.url')
 
@@ -230,39 +243,54 @@ function update_sso_portalurl() {
 }
 
 function configure_acs() {
-  echo "Configuring Application Configuration Service to use repo: ${CONFIG_REPO}"
+  echo "Configuring Application Configuration Service to use repo: ${CONFIG_REPO}..."
   az spring application-configuration-service git repo add --name acme-config --label main --patterns "catalog,identity,payment" --uri ${CONFIG_REPO}
 }
 
 function create_cart_service() {
-  echo "Creating cart-service app"
+  echo "Creating cart-service app..."
   az spring app create --name $CART_SERVICE
-  az spring gateway route-config create --name $CART_SERVICE --app-name $CART_SERVICE --routes-file "$PROJECT_ROOT/azure/routes/cart-service.json"
+  
+  echo "Configuring cart-service app gateway..."
+  az spring gateway route-config create --name $CART_SERVICE --app-name $CART_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/cart-service.json"
+                                               
+  echo "***SKIPPING Configuring cart-service app redis..."                                             
+                   
+                                               
+#  echo "Configuring cart-service app redis..."
+#  az spring connection create redis \
+#    --service $SPRING_APPS_SERVICE \
+#    --deployment default \
+#    --resource-group $RESOURCE_GROUP \
+#    --target-resource-group $RESOURCE_GROUP \
+#    --server $REDIS_NAME \
+#    --database 0 \
+#    --app $CART_SERVICE \
+#    --client-type java \
+#    --connection $CART_SERVICE_REDIS_CONNECTION
+#
 
-  az spring connection create redis \
-    --service $SPRING_APPS_SERVICE \
-    --deployment default \
-    --resource-group $RESOURCE_GROUP \
-    --target-resource-group $RESOURCE_GROUP \
-    --server $REDIS_NAME \
-    --database 0 \
-    --app $CART_SERVICE \
-    --client-type java \
-    --connection $CART_SERVICE_REDIS_CONNECTION
 }
 
 function create_identity_service() {
-  echo "Creating identity service"
+  echo "Creating identity service app..."
   az spring app create --name $IDENTITY_SERVICE
+  
+  echo "Creating identity service app ACS..."
   az spring application-configuration-service bind --app $IDENTITY_SERVICE
-  az spring gateway route-config create --name $IDENTITY_SERVICE --app-name $IDENTITY_SERVICE --routes-file "$PROJECT_ROOT/azure/routes/identity-service.json"
+  
+  echo "Creating identity service app gateway..."
+  az spring gateway route-config create --name $IDENTITY_SERVICE --app-name $IDENTITY_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/identity-service.json"
 }
 
 function create_order_service() {
-  echo "Creating order service"
+  echo "Creating order service app..."
   az spring app create --name $ORDER_SERVICE
-  az spring gateway route-config create --name $ORDER_SERVICE --app-name $ORDER_SERVICE --routes-file "$PROJECT_ROOT/azure/routes/order-service.json"
+  
+  echo "Creating order service app gateway..."
+  az spring gateway route-config create --name $ORDER_SERVICE --app-name $ORDER_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/order-service.json"
 
+  echo "Creating order service app postres..."
   az spring connection create postgres-flexible \
     --resource-group $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
@@ -277,12 +305,19 @@ function create_order_service() {
 }
 
 function create_catalog_service() {
-  echo "Creating catalog service"
+  echo "Creating catalog service app..."
   az spring app create --name $CATALOG_SERVICE
+  
+  echo "Creating catalog service app ACS..."
   az spring application-configuration-service bind --app $CATALOG_SERVICE
+  
+  echo "Creating catalog service app ServiceRegistryBind..."
   az spring service-registry bind --app $CATALOG_SERVICE
-  az spring gateway route-config create --name $CATALOG_SERVICE --app-name $CATALOG_SERVICE --routes-file "$PROJECT_ROOT/azure/routes/catalog-service.json"
+  
+  echo "Creating catalog service app gateway..."  
+  az spring gateway route-config create --name $CATALOG_SERVICE --app-name $CATALOG_SERVICE --routes-file "$PROJECT_ROOT/resources/json/routes/catalog-service.json"
 
+  echo "Creating catalog service app postgres..."  
   az spring connection create postgres-flexible \
     --resource-group $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
@@ -297,20 +332,26 @@ function create_catalog_service() {
 }
 
 function create_payment_service() {
-  echo "Creating payment service"
+  echo "Creating payment service app..."
   az spring app create --name $PAYMENT_SERVICE
+  
+  echo "Creating payment service app ACS..."  
   az spring application-configuration-service bind --app $PAYMENT_SERVICE
+  
+  echo "Creating payment service app ServiceRegistryBind..."  
   az spring service-registry bind --app $PAYMENT_SERVICE
 }
 
 function create_frontend_app() {
-  echo "Creating frontend"
+  echo "Creating frontend app..."
   az spring app create --name $FRONTEND_APP
-  az spring gateway route-config create --name $FRONTEND_APP --app-name $FRONTEND_APP --routes-file "$PROJECT_ROOT/azure/routes/frontend.json"
+  
+  echo "Creating frontend app gateway..."  
+  az spring gateway route-config create --name $FRONTEND_APP --app-name $FRONTEND_APP --routes-file "$PROJECT_ROOT/resources/json/routes/frontend.json"
 }
 
 function deploy_cart_service() {
-  echo "Deploying cart-service application"
+  echo "Deploying cart-service app..."
   local redis_conn_str=$(az spring connection show -g $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
     --deployment default \
@@ -326,8 +367,8 @@ function deploy_cart_service() {
 }
 
 function deploy_identity_service() {
+  echo "Deploying identity-service app..."
   source "$PROJECT_ROOT/scripts/setup-sso-variables-ad.sh"
-  echo "Deploying identity-service application"
   az spring app deploy --name $IDENTITY_SERVICE \
     --env "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=${JWK_SET_URI}" \
     --config-file-pattern identity \
@@ -336,7 +377,7 @@ function deploy_identity_service() {
 }
 
 function deploy_order_service() {
-  echo "Deploying user-service application"
+  echo "Deploying user-service app..."
   local gateway_url=$(az spring gateway show | jq -r '.properties.url')
   local postgres_connection_url=$(az spring connection show -g $RESOURCE_GROUP \
     --service $SPRING_APPS_SERVICE \
@@ -352,22 +393,22 @@ function deploy_order_service() {
 }
 
 function deploy_catalog_service() {
-  echo "Building catalog-service application"
+  echo "Building catalog-service app..."
   CURRENT_DIR=$(pwd)
   cd "$APPS_ROOT/acme-catalog"
   $APPS_ROOT/acme-catalog/gradlew clean build
   cd $CURRENT_DIR
 
-  echo "Deploying catalog-service application"
+  echo "Deploying catalog-service app..."
   az spring app deploy --name $CATALOG_SERVICE \
     --config-file-pattern catalog \
     --jvm-options='-XX:MaxMetaspaceSize=148644K' \
-    --source-path "$APPS_ROOT/acme-catalog" \
-    --env "SPRING_DATASOURCE_AZURE_PASSWORDLESSENABLED=true"
+    --env "SPRING_DATASOURCE_AZURE_PASSWORDLESSENABLED=true" \
+    --source-path "$APPS_ROOT/acme-catalog" 
 }
 
 function deploy_payment_service() {
-  echo "Deploying payment-service application"
+  echo "Deploying payment-service app..."
 
   az spring app deploy --name $PAYMENT_SERVICE \
     --config-file-pattern payment \
@@ -376,7 +417,7 @@ function deploy_payment_service() {
 }
 
 function deploy_frontend_app() {
-  echo "Deploying frontend application"
+  echo "Deploying frontend app..."
   local app_insights_key=$(az spring build-service builder buildpack-binding show -n default | jq -r '.properties.launchProperties.properties."connection-string"')
 
   rm -rf "$APPS_ROOT/acme-shopping/node_modules"
@@ -384,6 +425,14 @@ function deploy_frontend_app() {
     --builder $CUSTOM_BUILDER \
     --env "APPLICATIONINSIGHTS_CONNECTION_STRING=$app_insights_key" \
     --source-path "$APPS_ROOT/acme-shopping"
+}
+
+function get_date_time() {
+	returnValue=""
+	theDate=$(date +"%Y-%m-%d")	
+	theTime=$(date +"%T")	
+	returnValue="$theDate $theTime"
+	eval "$returnValue"
 }
 
 function main() {
@@ -396,30 +445,38 @@ function main() {
   configure_sso
   configure_gateway
 
-  create_identity_service
   create_cart_service
   create_order_service
   create_payment_service
   create_catalog_service
+  
+  create_identity_service  
   create_frontend_app
 
-  deploy_identity_service
   deploy_cart_service
   deploy_order_service
   deploy_payment_service
   deploy_catalog_service
+  
+  deploy_identity_service  
   deploy_frontend_app
 
   update_sso_portalurl
-
+  
 }
 
+theDate=$(date +"%Y-%m-%d")	
+theTime=$(date +"%T")	
+returnValue="$theDate $theTime"
 
+echo "Begins: $returnValue"
+	
 if [ "$#" -lt 6 ]
 	then
 		usage
 		exit 22
 fi
+
 
 while getopts ":s:g:r:" options; do
   case "$options" in
@@ -446,6 +503,7 @@ while getopts ":s:g:r:" options; do
   esac
 done
 
+
 check_args
 set_defaults
 get_user_info
@@ -453,4 +511,10 @@ display_setup
 
 main
 
+theDate=$(date +"%Y-%m-%d")	
+theTime=$(date +"%T")	
+returnValue="$theDate $theTime"
+
+echo "Ends: $returnValue"
+	
 exit 0
