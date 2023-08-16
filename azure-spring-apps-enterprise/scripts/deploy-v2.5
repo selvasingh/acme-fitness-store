@@ -399,18 +399,23 @@ function deploy_order_service() {
 }
 
 function deploy_catalog_service() {
-  echo "Building catalog-service-app..."
-  CURRENT_DIR=$(pwd)
-  cd "$APPS_ROOT/acme-catalog"
-  $APPS_ROOT/acme-catalog/gradlew clean build
-  cd $CURRENT_DIR
+
+  echo "*** SKIPPING Building catalog-service-app..."
+
+#  echo "Building catalog-service-app..."
+
+#  CURRENT_DIR=$(pwd)
+#  cd "$APPS_ROOT/acme-catalog"
+#  $APPS_ROOT/acme-catalog/gradlew clean build
+# cd $CURRENT_DIR
 
   echo "Deploying catalog-service-app..."
   az spring app deploy --name $CATALOG_SERVICE \
     --config-file-pattern catalog \
     --jvm-options='-XX:MaxMetaspaceSize=148644K' \
     --env "SPRING_DATASOURCE_AZURE_PASSWORDLESSENABLED=true" \
-    --source-path "$APPS_ROOT/acme-catalog" 
+    --build-env BP_JVM_VERSION=17 \
+    --source-path "$APPS_ROOT/acme-catalog"
 }
 
 function deploy_payment_service() {
@@ -419,6 +424,7 @@ function deploy_payment_service() {
   az spring app deploy --name $PAYMENT_SERVICE \
     --config-file-pattern payment \
     --jvm-options='-XX:MaxMetaspaceSize=148644K' \
+    --build-env BP_JVM_VERSION=17 \
     --source-path "$APPS_ROOT/acme-payment"
 }
 
