@@ -378,6 +378,7 @@ function deploy_identity_service() {
     --env "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=${JWK_SET_URI}" \
     --config-file-pattern identity \
     --jvm-options='-XX:MaxMetaspaceSize=148644K' \
+    --build-env BP_JVM_VERSION=17 \
     --source-path "$APPS_ROOT/acme-identity"
 }
 
@@ -450,9 +451,12 @@ function get_date_time() {
 function main() {
 
   create_spring_cloud
+
   configure_defaults
+
   create_dependencies
   create_builder
+
   configure_acs
   configure_sso
   configure_gateway
