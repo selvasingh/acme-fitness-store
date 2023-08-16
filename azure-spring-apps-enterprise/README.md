@@ -1259,9 +1259,21 @@ The Application Insights Instrumentation Key must be provided for the non-java a
 
 Retrieve the Instrumentation Key for Application Insights and add to Key Vault
 
+#### Install application-insights plugin
+```shell
+az extension add --upgrade -n application-insights
+``````
+
+#### Get your app name
+```shell
+az monitor app-insights component show
+``````
+
+#### Export as an eVar
 ```shell
 export INSTRUMENTATION_KEY=$(az monitor app-insights component show --app ${APPLICATION_INSIGHTS} | jq -r '.connectionString')
 
+#### Set the Secret
 az keyvault secret set --vault-name ${KEY_VAULT} \
     --name "ApplicationInsights--ConnectionString" --value ${INSTRUMENTATION_KEY}
 ```
