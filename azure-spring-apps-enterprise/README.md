@@ -1020,7 +1020,7 @@ Next, update the affected applications to use the newly created databases and re
 az spring app restart --name ${CATALOG_SERVICE_APP}
 ```
 
-#### Retrieve the PostgreSQL connection string and update the Catalog Service:
+#### Retrieve the PostgreSQL connection string and update the Order Service:
 
 ```shell
 export POSTGRES_CONNECTION_STR=$(az spring connection show \
@@ -1034,7 +1034,7 @@ export POSTGRES_CONNECTION_STR=$(az spring connection show \
 ```shell
 az spring app update \
     --name order-service \
-    --env "DatabaseProvider=Postgres" "ConnectionStrings__OrderContext=${POSTGRES_CONNECTION_STR}" "AcmeServiceSettings__AuthUrl=https://${GATEWAY_URL}"
+    --env "DatabaseProvider=Postgres" "ConnectionStrings__OrderContext=${POSTGRES_CONNECTION_STR};Trust Server Certificate=true;" "AcmeServiceSettings__AuthUrl=https://${GATEWAY_URL}"
 ```
 
 #### Retrieve the Redis connection string and update the Cart Service:
