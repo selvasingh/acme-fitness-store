@@ -1279,8 +1279,8 @@ export APPLICATION_INSIGHTS=#put your application name here
 export INSTRUMENTATION_KEY=$(az monitor app-insights component show --app ${APPLICATION_INSIGHTS} | jq -r '.connectionString')
 ```
 
-
 #### Set the Secret
+```shell
 az keyvault secret set --vault-name ${KEY_VAULT} \
     --name "ApplicationInsights--ConnectionString" --value ${INSTRUMENTATION_KEY}
 ```
