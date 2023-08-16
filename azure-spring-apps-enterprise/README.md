@@ -1264,14 +1264,21 @@ Retrieve the Instrumentation Key for Application Insights and add to Key Vault
 az extension add --upgrade -n application-insights
 ``````
 
-#### Get your app name
+#### Get your app-name
 ```shell
 az monitor app-insights component show
-``````
+```
 
-#### Export as an eVar
+#### Export app-name as an eVar
+```shell
+export APPLICATION_INSIGHTS=#put your application name here
+```
+
+#### Export Instrumentation Key as an eVar
 ```shell
 export INSTRUMENTATION_KEY=$(az monitor app-insights component show --app ${APPLICATION_INSIGHTS} | jq -r '.connectionString')
+```
+
 
 #### Set the Secret
 az keyvault secret set --vault-name ${KEY_VAULT} \
