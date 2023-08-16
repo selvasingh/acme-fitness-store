@@ -51,7 +51,9 @@ function set_defaults() {
 	  SUFFIX=$(openssl rand -hex 3) 
   fi
 	
-	#echo "The service suffix for this installation: $SUFFIX"
+	echo ""
+	echo "The service suffix for this installation: $SUFFIX"
+	echo ""
 	
 	readonly REDIS_NAME="fitness-cache${SUFFIX}"
 	readonly ORDER_SERVICE_POSTGRES_CONNECTION="order_service_db"
