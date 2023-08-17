@@ -16,7 +16,19 @@ function usage() {
   echo "  -r <region>               -Region to use for the deployment" 
   echo "  -g <resource_group>       -Resource group to use for the deployment"
   echo ""
+  echo "   Environment Variable: SUFFIX"
+  echo "   *** MUST BE SET BEFORE INVOKING THIS SCRIPT ***"
+  echo "      This makes resource names unique for various components, use it as an index."  
   echo ""
+  echo ""    
+  echo "   Example: "
+  echo "       export SUFFIX='-wr10'"
+  echo "       $0 -s acme-fitness-auto10 -g acme-westus-rg10 -r westus 2>&1 | tee ~/data/txt/deploy-v2.5-west-wr10-log.txt"
+  echo ""  
+  echo ""  
+  echo "     Creates a ASAE Server Instance: acme-fitness-auto10-wr10, Resource Group: acme-westus-rg10-wr10, Region: westus"  
+  echo ""  
+  echo ""        
   exit 1
   
 }
