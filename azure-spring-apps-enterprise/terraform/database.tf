@@ -27,7 +27,7 @@ resource "azurerm_redis_cache" "redis" {
 # Create Secret for Redis Server
 resource "azurerm_key_vault_secret" "cart_redis_connection_secret" {
   name         = "CART-REDIS-CONNECTION-STRING"
-  value        = "rediss://:${azurerm_redis_cache.redis.primary_access_key}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.ssl_port}/0"
+  value        = "redis://:${azurerm_redis_cache.redis.primary_access_key}@${azurerm_redis_cache.redis.hostname}:${azurerm_redis_cache.redis.ssl_port}/0"
   key_vault_id = azurerm_key_vault.key_vault.id
 }
 
