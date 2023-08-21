@@ -1020,7 +1020,7 @@ Next, update the affected applications to use the newly created databases and re
 az spring app restart --name ${CATALOG_SERVICE_APP}
 ```
 
-#### Retrieve the PostgreSQL connection string and update the Catalog Service:
+#### Retrieve the PostgreSQL connection string and update the Order Service:
 
 ```shell
 export POSTGRES_CONNECTION_STR=$(az spring connection show \
@@ -1034,7 +1034,7 @@ export POSTGRES_CONNECTION_STR=$(az spring connection show \
 ```shell
 az spring app update \
     --name order-service \
-    --env "DatabaseProvider=Postgres" "ConnectionStrings__OrderContext=${POSTGRES_CONNECTION_STR}" "AcmeServiceSettings__AuthUrl=https://${GATEWAY_URL}"
+    --env "DatabaseProvider=Postgres" "ConnectionStrings__OrderContext=${POSTGRES_CONNECTION_STR};Trust Server Certificate=true;" "AcmeServiceSettings__AuthUrl=https://${GATEWAY_URL}"
 ```
 
 #### Retrieve the Redis connection string and update the Cart Service:
@@ -1259,9 +1259,28 @@ The Application Insights Instrumentation Key must be provided for the non-java a
 
 Retrieve the Instrumentation Key for Application Insights and add to Key Vault
 
+#### Install application-insights plugin
+```shell
+az extension add --upgrade -n application-insights
+``````
+
+#### Get your app-name
+```shell
+az monitor app-insights component show
+```
+
+#### Export app-name as an eVar
+```shell
+export APPLICATION_INSIGHTS=#put your application name here
+```
+
+#### Export Instrumentation Key as an eVar
 ```shell
 export INSTRUMENTATION_KEY=$(az monitor app-insights component show --app ${APPLICATION_INSIGHTS} | jq -r '.connectionString')
+```
 
+#### Set the Secret
+```shell
 az keyvault secret set --vault-name ${KEY_VAULT} \
     --name "ApplicationInsights--ConnectionString" --value ${INSTRUMENTATION_KEY}
 ```
