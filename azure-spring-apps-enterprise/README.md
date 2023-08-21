@@ -20,6 +20,7 @@ finished, you can continue to manage the application via the Azure CLI or switch
   * [Unit 5 - Monitor End-to-End](#unit-5---monitor-end-to-end)
   * [Unit 6 - Set Request Rate Limits](#unit-6---set-request-rate-limits)
   * [Unit 7 - Automate from idea to production](#unit-7---automate-from-idea-to-production)
+  * [Unit 8 - Infuse AI into Fitness Store](#unit-8---infuse-ai-into-fitness-store)
 
 ## What will you experience
 
@@ -37,14 +38,15 @@ You will:
 
 The following diagram shows the architecture of the ACME Fitness Store that will be used for this guide:
 
-![An image showing the services involved in the ACME Fitness Store. It depicts the applications and their dependencies](./media/architecture.jpg)
+![An image showing the services involved in the ACME Fitness Store. It depicts the applications and their dependencies](./media/acme-fitness-store-architecture.jpg)
 
 This application is composed of several services:
 
-* 3 Java Spring Boot applications:
+* 4 Java Spring Boot applications:
   * A catalog service for fetching available products. This application will use Azure AD authentication to connect to PostgreSQL
   * A payment service for processing and approving payments for users' orders
   * An identity service for referencing the authenticated user
+  * An assist service for infusing AI into fitness store
 
 * 1 Python application:
   * A cart service for managing a users' items that have been selected for purchase
@@ -211,6 +213,7 @@ az account set --subscription ${SUBSCRIPTION}
 ./setup-sso-variables-ad.sh
 ./setup-sso-variables.sh
 ./setup-db-env-variables.sh 
+./setup-ai-env-variables.sh 
 ```
 
 > This cumulative script can be found at:
@@ -393,7 +396,6 @@ az spring app create --name ${CART_SERVICE_APP} --instance-count 1 --memory 1Gi 
 az spring app create --name ${ORDER_SERVICE_APP} --instance-count 1 --memory 1Gi &
 az spring app create --name ${PAYMENT_SERVICE_APP} --instance-count 1 --memory 1Gi &
 az spring app create --name ${CATALOG_SERVICE_APP} --instance-count 1 --memory 1Gi &
-
 ```
 
 Then, create an app for the Front End: 
@@ -986,7 +988,7 @@ az spring connection create postgres-flexible \
     --system-identity
 ```
 
->Note: When the above command is run on iOS, it will require:
+> Note: When the above command is run on iOS, it will require:
 postgresql and a PostGres installed extension 'serviceconnector-passwordless' 
 to be present.  If you do not have these installed, they will be installed as a result
 of this command.
@@ -1007,8 +1009,8 @@ az spring connection create redis \
     --database 0 \
     --client-type python 
 ```
-> Note: Currently, the Azure Spring Apps CLI extension only allows for client types of java, springboot, or dotnet.
-> The cart service uses a client connection type of java because the connection strings are the same for python and java.
+> Note: Currently, the Azure Spring Apps CLI extension only allows for client types of Java, springboot, or dotnet.
+> The cart service uses a client connection type of Java because the connection strings are the same for python and Java.
 > This will be changed when additional options become available in the CLI.
 
 ### Update Applications
@@ -1016,6 +1018,7 @@ az spring connection create redis \
 Next, update the affected applications to use the newly created databases and redis cache.
 
 #### Restart the Catalog Service for the Service Connector to take effect:
+
 ```shell
 az spring app restart --name ${CATALOG_SERVICE_APP}
 ```
@@ -1252,9 +1255,9 @@ Prerequisites:
 
 ### Add Instrumentation Key to Key Vault
 
-The Application Insights Instrumentation Key must be provided for the non-java applications.
+The Application Insights Instrumentation Key must be provided for the non-Java applications.
 
-> Note: In future iterations, the buildpacks for non-java applications will support
+> Note: In future iterations, the buildpacks for non-Java applications will support
 > Application Insights binding and this step will be unnecessary.
 
 Retrieve the Instrumentation Key for Application Insights and add to Key Vault
@@ -1280,7 +1283,7 @@ az spring build-service builder buildpack-binding set \
 
 ### Reload Applications
 
-Restart applications to reload configuration. For the Java applications, this will allow the new sampling rate to take effect. For the non-java applications, this will allow them to access the Instrumentation Key from Key Vault. 
+Restart applications to reload configuration. For the Java applications, this will allow the new sampling rate to take effect. For the non-Java applications, this will allow them to access the Instrumentation Key from Key Vault. 
 
 ```shell
 az spring app restart -n ${CART_SERVICE_APP}
@@ -1672,7 +1675,7 @@ az ad sp create-for-rbac --name "change-me" \
 }
 ```
 
->This output will be needed as a secret value for the next step.   Save this off to a file, in a secure location that you can reference later.
+> This output will be needed as a secret value for the next step.   Save this off to a file, in a secure location that you can reference later.
 
 ### Add Secrets to GitHub Actions
 
@@ -1755,6 +1758,161 @@ Each application has a `Deploy` workflow that will redeploy the application when
 The `cleanup` workflow can be manually run to delete all resources created by the `provision` workflow. The output can be seen below:
 
 ![Output from the cleanup workflow](media/cleanup.png)
+
+## Unit 8 - Infuse AI into Fitness Store
+
+### Prerequisites
+- JDK 17
+- Python 3
+- Maven
+- Azure CLI
+- An Azure subscription with access granted to Azure OpenAI (request access to Azure OpenAI [here](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUOFA5Qk1UWDRBMjg0WFhPMkIzTzhKQ1dWNyQlQCN0PWcu))
+
+### Prepare the Environment Variables
+
+1. Please navigate to the root folder of this cloned repository.
+
+1. Copy the AI environment variables template file, e.g. 
+
+   ```bash
+   cp azure-spring-apps-enterprise/scripts/setup-ai-env-variables-template.sh azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh
+   ```
+
+1. Update the values in `azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh` with your own values, as configured in Azure OpenAI instance:
+ - Name, e.g. `my-ai`
+ - Endpoint, e.g. `https://my-ai.openai.azure.com`
+ - Chat deployment ID, e.g. `gpt-35-turbo-16k``
+ - Embedding deployment ID, e.g. `text-embedding-ada-002``
+ - OpenAI API Key, to be updated once you create AI instance (in next step)
+ 
+
+### Prepare Azure OpenAI 
+
+1. Run the following command to create an Azure OpenAI resource in the the resource group.
+
+   ```bash
+   source ./azure-spring-apps-enterprise/scripts/setup-env-variables.sh
+   export OPENAI_RESOURCE_NAME=<choose-a-resource-name>
+   az cognitiveservices account create \
+      -n ${OPENAI_RESOURCE_NAME} \
+      -g ${RESOURCE_GROUP} \
+      -l eastus \
+      --kind OpenAI \
+      --sku s0 \
+      --custom-domain ${OPENAI_RESOURCE_NAME}   
+   ```
+   
+   You can check the resource has been created in Azure Portal under `Azure AI Services`, e.g.
+
+   ![A screenshot of the Azure AI services.](./media/openai-azure-ai-services.png)
+
+1. Create the model deployments for `text-embedding-ada-002` and `gpt-35-turbo-16k` in your Azure OpenAI service.
+   
+   ```bash
+   az cognitiveservices account deployment create \
+      -g ${RESOURCE_GROUP} \
+      -n ${OPENAI_RESOURCE_NAME} \
+      --deployment-name text-embedding-ada-002 \
+      --model-name text-embedding-ada-002 \
+      --model-version "2"  \
+      --model-format OpenAI \
+      --scale-type "Standard" 
+
+    az cognitiveservices account deployment create \
+      -g ${RESOURCE_GROUP} \
+      -n ${OPENAI_RESOURCE_NAME} \
+      --deployment-name gpt-35-turbo-16k \
+      --model-name gpt-35-turbo-16k \
+      --model-version "0613"  \
+      --model-format OpenAI \
+      --scale-type "Standard"
+   ```
+
+   This step could also be done in `Azure AI Studio`. You can go to `Azure AI Studio` by going to `Deployments` in your Open AI service and clicking on `Manage Deployments` button.
+
+   ![A screenshot of the Azure Portal OpenAI Services deployments.](./media/openai-azure-ai-services-deployments.png)
+
+   Alternatively, you can click go to the link, e.g. https://oai.azure.com/
+
+   ![A screenshot of the Azure AI Studio with no deployments.](./media/openai-azure-ai-studio-deployments-01.png)
+
+   ![A screenshot of the Azure AI Studio creating first deployment.](./media/openai-azure-ai-studio-deployments-02.png)
+
+   ![A screenshot of the Azure AI Studio creating second deployment.](./media/openai-azure-ai-studio-deployments-03.png)
+
+1. Update the values in `azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh`, e.g.
+    * for Endpoint and API KEY - check under Azure Portal OpenAI instances in `Keys and Endpoint` section
+    ![A screenshot of the Azure Portal OpenAI instance.](./media/openai-azure-ai-services-api-key.png)    
+    * for `AZURE_OPENAI_CHATDEPLOYMENTID` use previously defined model, e.g. `gpt-35-turbo-16k`
+    * for `AZURE_OPENAI_EMBEDDINGDEPLOYMENTID` use previously defined model, e.g. `text-embedding-ada-002`
+    * for `AI_APP` use default name, e.g. `assist-service`
+    
+> Note: You can get the endpoint by querying the `cognitiveservices` from Azure CLI, e.g.
+
+   ```bash
+   az cognitiveservices account show \
+     --name ${OPENAI_RESOURCE_NAME} \
+     --resource-group ${RESOURCE_GROUP} \
+     --output json | jq -r '.properties.endpoint' 
+   ```
+
+### (Optional) Process the data into the vector store
+
+Before building the `assist-service` service, we need to preprocess the data into the vector store. The vector store is a file that contains the vector representation of each product description. There's already a pre-built file `vector_store.json` in the repo so you can skip this step. If you want to build the vector store yourself, please run the following commands:
+```bash
+source ./azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh
+cd apps/acme-assist
+./preprocess.sh data/bikes.json,data/accessories.json src/main/resources/vector_store.json
+```
+
+### Build and Deploy Assist app to Azure Spring Apps
+
+1. Configure AI environment variables, e.g. 
+
+   ```bash
+   source ./azure-spring-apps-enterprise/scripts/setup-ai-env-variables.sh
+   ```
+
+1. Create the new AI service `assist-service`, e.g.
+
+    ```bash    
+    az spring app create --name ${AI_APP} --instance-count 1 --memory 1Gi
+    ```
+
+1.  Configure Spring Cloud Gateway with the `assist-service` routes, e.g.
+
+    ```bash
+    az spring gateway route-config create \
+        --name ${AI_APP} \
+        --app-name ${AI_APP} \
+        --routes-file azure-spring-apps-enterprise/resources/json/routes/assist-service.json
+    ```
+    
+1. Deploy the application, e.g. 
+
+    ```bash
+    az spring app deploy --name ${AI_APP} \
+        --source-path apps/acme-assist \
+        --build-env BP_JVM_VERSION=17 \
+        --env \
+        AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT} \
+        AZURE_OPENAI_APIKEY=${AZURE_OPENAI_APIKEY} \
+        AZURE_OPENAI_CHATDEPLOYMENTID=${AZURE_OPENAI_CHATDEPLOYMENTID} \
+        AZURE_OPENAI_EMBEDDINGDEPLOYMENTID=${AZURE_OPENAI_EMBEDDINGDEPLOYMENTID}
+    ```
+
+1. Test the `acme-fitness` application in the browser again. Go to `ASK TO FITASSIST` and converse with the assistant, e.g.
+
+   ```
+   I need a bike for a commute to work.
+   ```
+
+   ![A screenshot of the ACME Fitness Store.](./media/homepage.png)
+
+1. Observe the output that was generated by the Assist application, e.g.
+
+   ![A screenshot of the ACME Fitness Store with FitAssist](./media/fitassist.png)
+
 
 ## Next Steps
 

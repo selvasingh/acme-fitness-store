@@ -15,14 +15,15 @@ urlFragment: "acme-fitness-store"
 ACME Fitness store is a fictional online retailer selling sporting goods. This repo contains the source code and deployment scripts for the ACME Fitness store application.
 
 ## High Level Architecture
-![An image showing the services involved in the ACME Fitness Store. It depicts the applications and their dependencies](./azure-spring-apps-enterprise/media/architecture.jpg)
+![An image showing the services involved in the ACME Fitness Store. It depicts the applications and their dependencies](./azure-spring-apps-enterprise/media/acme-fitness-store-architecture.jpg)
 
 This application is composed of several services:
 
-* 3 Java Spring Boot applications:
+* 4 Java Spring Boot applications:
   * A catalog service for fetching available products. 
   * A payment service for processing and approving payments for users' orders
   * An identity service for referencing the authenticated user
+  * An assist service for infusing AI into fitness store
 
 * 1 Python application:
   * A cart service for managing a users' items that have been selected for purchase
@@ -33,8 +34,7 @@ This application is composed of several services:
 * 1 NodeJS and static HTML Application
   * A frontend shopping application
 
-The sample can be deployed to Azure Spring Apps Enterprise or Tanzu Application
-Platform. 
+The sample can be deployed to Azure Spring Apps Enterprise or Tanzu Application Platform. 
 
 ## Repo Organization
 
@@ -64,7 +64,8 @@ shows you how to deploy the ACME Fitness store application to Azure Spring Apps
   * [Unit 4 - Securely Load Application Secrets](./azure-spring-apps-enterprise/#unit-4---securely-load-application-secrets)
   * [Unit 5 - Monitor End-to-End](./azure-spring-apps-enterprise/#unit-5---monitor-end-to-end)
   * [Unit 6 - Set Request Rate Limits](./azure-spring-apps-enterprise/#unit-6---set-request-rate-limits)
-  * [Unit 7 - Automate from idea to production](./azure-spring-apps-enterprise/#unit-7---automate-from-idea-to-production) 
+  * [Unit 7 - Automate from idea to production](./azure-spring-apps-enterprise/#unit-7---automate-from-idea-to-production)
+  * [Unit 8 - Infuse AI into Fitness Store](./azure-spring-apps-enterprise/#unit-8---infuse-ai-into-fitness-store)
 
 ## Deploy Apps to Tanzu Application Platform (TAP)
 
