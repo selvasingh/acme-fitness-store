@@ -30,14 +30,14 @@ public class SuggestedPromptRepository {
 
     @PostConstruct
     private void loadSuggestedPrompts() {
-        Resource resource = context.getResource("classpath:com/azure/acme/assist/suggested-prompts.json");
+        Resource resource = context.getResource("classpath:com/example/acme/assist/suggested-prompts.json");
         List<SuggestedPrompts> list = null;
         try {
             ObjectMapper mapper = new ObjectMapper();
             list = mapper.readValue(resource.getInputStream(),
                     mapper.getTypeFactory().constructCollectionType(List.class, SuggestedPrompts.class));
         } catch (Exception e) {
-            log.warn("Cannot load suggested-prompots.json", e);
+            log.warn("Cannot load suggested-prompts.json", e);
         }
 
         if (list != null && list.size() > 0) {
