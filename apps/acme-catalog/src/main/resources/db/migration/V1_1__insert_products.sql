@@ -2462,7 +2462,7 @@ For improved visibility at all times, our racks and trunk bags feature a dedicat
 - Attachment: MIK
 - Fiber content: 35% Poly 600 PU Coating / 30% Poly 840 PU Coating / 15% 3M Silver Reflective Mesh / 11% Nylon Mesh / 9% Poly Super Nylex Mesh
 - Material: Woven
-- Weight: 860g', '/static/images/new_bikess.json_1.jpg', '/static/images/new_bikess.json_1.jpg', '/static/images/new_bikess.json_1.jpg', 'Verden MIK Cargo Trunk Bag', 34.99, 'A versatile trunk bag designed to fit a wide range of cargo that quickly and securely mounts to compatible MIK racks.', 'trunkbag'),
+- Weight: 860g', '/static/images/new_accessories_1.jpg', '/static/images/new_accessories_1.jpg', '/static/images/new_accessories_1.jpg', 'Verden MIK Cargo Trunk Bag', 34.99, 'A versatile trunk bag designed to fit a wide range of cargo that quickly and securely mounts to compatible MIK racks.', 'trunkbag'),
 ('de31c206-e0be-44a4-bb30-599832d056fa', '## Overview
 Make your bike rides more convenient and enjoyable with the Velocity Xplorer TrunkPak. This trunk bag offers simple and secure on-bike storage that can be easily installed and removed without the need for tools. It features multiple pockets for easy organization, a durable design with reflective materials, and a built-in rain cover to protect you and your gear in all weather conditions.
 
