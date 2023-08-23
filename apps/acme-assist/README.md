@@ -4,7 +4,7 @@
 - JDK 17
 - Python 3
 - Maven
-- Azure CLI
+- Azure CLI (>= 2.51.0)
 - An Azure subscription with access granted to Azure OpenAI (see more [here](https://customervoice.microsoft.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR7en2Ais5pxKtso_Pz4b1_xUOFA5Qk1UWDRBMjg0WFhPMkIzTzhKQ1dWNyQlQCN0PWcu))
 
 
@@ -46,7 +46,9 @@
       --deployment-name gpt-35-turbo-16k \
       --model-name gpt-35-turbo-16k \
       --model-version "0613"  \
-      --model-format OpenAI
+      --model-format OpenAI \
+      --sku Standard \
+      --capacity 120
    ```
 
 
