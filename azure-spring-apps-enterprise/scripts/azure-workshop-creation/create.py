@@ -12,7 +12,7 @@ cli: any = get_default_cli()
 
 dataSource: str = environ['DATA_SOURCE']
 
-namespaces: list[str] = ["AppPlatform", "Cache", "DBforPostgreSQL", "Insights", "OperationalInsights", "SaaS", "ServiceLinker"]
+namespaces: list[str] = ["AppPlatform", "Cache", "CognitiveServices", "DBforPostgreSQL", "Insights", "OperationalInsights", "SaaS", "ServiceLinker"]
 
 currentDir: Path = Path.cwd()
 root: Path = currentDir.parent.parent.parent
@@ -67,7 +67,6 @@ with open(dataSource) as data:
 
 
 def accept_terms(student) -> None:
-    # for student in students:
     for name in namespaces:
         print(f"enabling {name} for sub {student['sub']}")
         cli.invoke(
@@ -114,7 +113,6 @@ def create_rgs(student) -> None:
         ]
     )
 
-
 def create_asa_e(student) -> None:
     service_name = f'{student["rg"]}-asa'
     logs_settings: str = str(alaResources.joinpath("logs").with_suffix(".json"))
@@ -144,6 +142,9 @@ def create_asa_e(student) -> None:
             'S2'
         ]
     )
+
+
+
     print(f'enabling Azure Log Analytics')
     cli.invoke(
         [
@@ -262,7 +263,7 @@ def create_dependencies(student) -> None:
             student['rg'],
             '--location',
             student['region'],
-            '--subscription', 
+            '--subscription',
             student['sub'],
             '--admin-user',
             ACMEFIT_POSTGRES_DB_USER,
@@ -822,6 +823,7 @@ def deploy_order_service(student) -> None:
         ]
     )
     postgre_connect_string = cli.result.result['configurations'][0]['value']
+
     args = [
             'spring',
             'app',
@@ -962,8 +964,8 @@ def deploy_identity_service(student) -> None:
 if __name__ == '__main__':
     print("-----")
     for student in students:
-        # accept_terms(student)
-        # # create_spring_cloud
+        accept_terms(student)
+        # create_spring_cloud
         create_rgs(student)
         create_asa_e(student)
         configure_acs(student)
@@ -972,9 +974,21 @@ if __name__ == '__main__':
         create_builder(student)
         configure_sso_and_gateway(student)
         create_applications(student)
-        deploy_identity_service(student)
-        deploy_cart_service(student)
-        deploy_order_service(student)
-        deploy_payment_service(student)
-        deploy_catalog_service(student)
-        deploy_frontend_app(student)
+        d1 = Process(deploy_identity_service(student))
+        d2 = Process(deploy_cart_service(student))
+        d3 = Process(deploy_order_service(student))
+        d4 = Process(deploy_payment_service(student))
+        d5 = Process(deploy_catalog_service(student))
+        d6 = Process(deploy_frontend_app(student))
+        d1.start()
+        d2.start()
+        d3.start()
+        d4.start()
+        d5.start()
+        d6.start()
+        d1.join()
+        d2.join()
+        d3.join()
+        d4.join()
+        d5.join()
+        d6.join()
