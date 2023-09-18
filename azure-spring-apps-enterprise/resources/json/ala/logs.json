@@ -1,0 +1,26 @@
+[
+    {
+      "category": "ApplicationConsole",
+      "enabled": true,
+      "retentionPolicy": {
+        "enabled": false,
+        "days": 0
+      }
+    },
+    {
+       "category": "SystemLogs",
+       "enabled": true,
+       "retentionPolicy": {
+         "enabled": false,
+         "days": 0
+       }
+     },
+    {
+       "category": "IngressLogs",
+       "enabled": true,
+       "retentionPolicy": {
+         "enabled": false,
+         "days": 0
+        }
+      }
+]

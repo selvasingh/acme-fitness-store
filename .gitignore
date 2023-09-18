@@ -57,3 +57,10 @@ hello-world/
 
 # vsCode
 .vscode
+
+##python venv
+**/venv/*
+*tfbackend*
+
+
+azure-spring-apps-enterprise/scripts/azure-workshop-creation/student*
